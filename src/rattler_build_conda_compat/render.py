@@ -18,6 +18,7 @@ from conda_build.variants import (
     combine_specs,
 )
 from conda_build.metadata import get_selectors
+from conda_build.config import Config
 
 from rattler_build_conda_compat.loader import parse_recipe_config_file
 from rattler_build_conda_compat.utils import find_recipe
@@ -31,7 +32,7 @@ class MetaData(CondaMetaData):
         config=None,
         variant=None,
     ):
-        self.config = get_or_merge_config(config, variant=variant)
+        self.config: Config = get_or_merge_config(config, variant=variant)
         if os.path.isfile(path):
             self._meta_path = path
             self._meta_name = os.path.basename(path)

@@ -14,7 +14,7 @@ rattler-build = "*"
 conda-build = "*"
 
 [pypi-dependencies]
-rattler_build = { path = ".", editable = true}
+rattler-build-conda-compat = { path = ".", editable = true}
 
 
 [feature.test.dependencies]
