@@ -1,0 +1,13 @@
+# serializer version: 1
+# name: test_render_recipe
+  list([
+    dict({
+      'python': '3.8.* *_cpython',
+      'target_platform': 'linux-64',
+    }),
+    dict({
+      'python': '3.9.* *_cpython',
+      'target_platform': 'linux-64',
+    }),
+  ])
+# ---

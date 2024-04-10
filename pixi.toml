@@ -1,0 +1,27 @@
+[project]
+name = "rattler-build-conda-compat"
+version = "0.1.0"
+description = "Add a short description here"
+authors = ["nichmor <nmorkotilo@gmail.com>"]
+channels = ["conda-forge"]
+platforms = ["win-64", "linux-64", "osx-64", "osx-arm64"]
+
+[tasks]
+
+[dependencies]
+python = ">=3.8"
+rattler-build = "*"
+conda-build = "*"
+
+[pypi-dependencies]
+rattler_build = { path = ".", editable = true}
+
+
+[feature.test.dependencies]
+pytest = "*"
+syrupy = "*"
+ruff = "*"
+
+
+[environments]
+test = ["test"]
