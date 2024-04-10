@@ -8,8 +8,11 @@ platforms = ["win-64", "linux-64", "osx-64", "osx-arm64"]
 
 [tasks]
 
+build_sdist = "pixi run python -m build --sdist"
+
 [dependencies]
 python = ">=3.8"
+build = "*"
 rattler-build = "*"
 conda-build = "*"
 
