@@ -1,6 +1,7 @@
 import fnmatch
 from logging import getLogger
 import os
+from pathlib import Path
 from typing import Iterable
 
 
@@ -158,3 +159,21 @@ def find_recipe(path):
     raise OSError(
         "More than one meta files ({}) found in {}".format(", ".join(VALID_METAS), path)
     )
+
+
+def has_recipe(recipe_dir: Path) -> bool:
+    """
+    
+    verify if recipe_dir contains recipe.yaml
+
+    it is used to detect whetever old or recipe should be used
+
+    
+    """
+    try:
+        recipe_path = find_recipe(recipe_dir)
+        if recipe_path:
+            return True
+        return False
+    except OSError:
+        return False

@@ -24,3 +24,25 @@ def unix_namespace():
     namespace = {"linux-64": True, "unix": True}
 
     return namespace
+
+
+@pytest.fixture
+def recipe_dir(tmpdir):
+    py_recipe = Path("tests/data/py_recipe.yaml").read_text()
+    recipe_dir = tmpdir / "recipe"
+    mkdir(recipe_dir)
+
+    (recipe_dir / "recipe.yaml").write_text(py_recipe, encoding="utf8")
+
+    yield recipe_dir
+
+
+@pytest.fixture
+def old_recipe_dir(tmpdir):
+    recipe_dir = tmpdir / "recipe"
+    mkdir(recipe_dir)
+
+    meta = Path(recipe_dir / "meta.yaml")
+    meta.touch()
+
+    yield recipe_dir
