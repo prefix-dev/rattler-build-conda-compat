@@ -15,6 +15,8 @@ python = ">=3.8"
 build = "*"
 rattler-build = "*"
 conda-build = "*"
+"ruamel.yaml" = "*"
+conda = ">=4.2"
 
 [pypi-dependencies]
 rattler-build-conda-compat = { path = ".", editable = true}

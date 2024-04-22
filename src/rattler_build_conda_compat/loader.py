@@ -81,3 +81,27 @@ def parse_recipe_config_file(path, namespace):
         with RecipeLoader.with_namespace(namespace):
             content = yaml.load(f, Loader=RecipeLoader)
     return remove_empty_keys(content)
+
+
+def load_all_requirements(path) -> dict:
+    with open(path) as f:
+        content = yaml.load(f, Loader=yaml.BaseLoader)
+
+    requirements_section = content.get("requirements", None)
+    if not requirements_section:
+        return content
+    
+    for section in requirements_section:
+        section_reqs = requirements_section[section]
+        expanded_reqs = []
+        for req in section_reqs:
+            if isinstance(req, dict):
+                then_reqs = req.get("then", [])
+                else_reqs = req.get("else", [])
+                expanded_reqs.extend(then_reqs)
+                expanded_reqs.extend(else_reqs)
+            else:
+                expanded_reqs.append(req)
+        requirements_section[section] = expanded_reqs
+
+    return content
