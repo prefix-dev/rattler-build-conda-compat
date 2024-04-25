@@ -1,6 +1,6 @@
 from contextlib import contextmanager
 import yaml
-from typing import Any
+from typing import Any, Union
 
 
 class RecipeLoader(yaml.BaseLoader):
@@ -66,6 +66,10 @@ class RecipeLoader(yaml.BaseLoader):
         return [self.construct_object(child, deep=deep) for child in node.value]
 
 
+def load_yaml(content: Union[str, bytes]):
+    return yaml.load(content, Loader=RecipeLoader)
+
+
 def remove_empty_keys(variant_dict):
     filtered_dict = {}
     for key, value in variant_dict.items():
@@ -83,16 +87,18 @@ def parse_recipe_config_file(path, namespace):
     return remove_empty_keys(content)
 
 
-def load_all_requirements(path) -> dict:
-    with open(path) as f:
-        content = yaml.load(f, Loader=yaml.BaseLoader)
+def load_all_requirements(content) -> dict:
+    # with open(path) as f:
+    #     content = yaml.load(f, Loader=yaml.BaseLoader)
 
-    requirements_section = content.get("requirements", None)
+    requirements_section = dict(content.get("requirements", {}))
     if not requirements_section:
-        return content
-    
+        return {}
+
     for section in requirements_section:
         section_reqs = requirements_section[section]
+        if not section_reqs:
+            continue
         expanded_reqs = []
         for req in section_reqs:
             if isinstance(req, dict):
@@ -104,4 +110,4 @@ def load_all_requirements(path) -> dict:
                 expanded_reqs.append(req)
         requirements_section[section] = expanded_reqs
 
-    return content
+    return requirements_section
