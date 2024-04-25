@@ -1,4 +1,6 @@
 from contextlib import contextmanager
+from os import PathLike
+from pathlib import Path
 import yaml
 from typing import Any, Union
 
@@ -67,7 +69,7 @@ class RecipeLoader(yaml.BaseLoader):
 
 
 def load_yaml(content: Union[str, bytes]):
-    return yaml.load(content, Loader=RecipeLoader)
+    return yaml.load(content, Loader=yaml.BaseLoader)
 
 
 def remove_empty_keys(variant_dict):

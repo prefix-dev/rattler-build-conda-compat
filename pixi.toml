@@ -28,6 +28,9 @@ pytest = "*"
 syrupy = "*"
 ruff = "*"
 
+[feature.test.tasks]
+test = "pytest"
+
 
 [environments]
 test = ["test"]
