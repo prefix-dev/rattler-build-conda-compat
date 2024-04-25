@@ -1,0 +1,8 @@
+requirements:
+  build:
+    - ${{ compiler('c') }}
+    - if: linux
+      then:
+        - ${{ cdt('xorg-x11-proto-devel') }}
+  host:
+    - python

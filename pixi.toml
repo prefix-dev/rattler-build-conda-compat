@@ -1,7 +1,7 @@
 [project]
 name = "rattler-build-conda-compat"
-version = "0.1.0"
-description = "Add a short description here"
+version = "0.0.3"
+description = "A package for exposing rattler-build API for conda-smithy"
 authors = ["nichmor <nmorkotilo@gmail.com>"]
 channels = ["conda-forge"]
 platforms = ["win-64", "linux-64", "osx-64", "osx-arm64"]
@@ -15,6 +15,9 @@ python = ">=3.8"
 build = "*"
 rattler-build = "*"
 conda-build = "*"
+"ruamel.yaml" = "*"
+conda = ">=4.2"
+pygithub = ">=2,<3"
 
 [pypi-dependencies]
 rattler-build-conda-compat = { path = ".", editable = true}
@@ -24,6 +27,9 @@ rattler-build-conda-compat = { path = ".", editable = true}
 pytest = "*"
 syrupy = "*"
 ruff = "*"
+
+[feature.test.tasks]
+test = "pytest"
 
 
 [environments]
