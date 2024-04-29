@@ -5410,9 +5410,9 @@ packages:
   timestamp: 1713391855237
 - kind: pypi
   name: rattler-build-conda-compat
-  version: 0.0.4
+  version: 0.0.5
   path: .
-  sha256: 45202b9ded422c1a8d4420f43f1a1885d63690fe748f40c3a03ab52d8bbcf334
+  sha256: b1f960b99c2844a2bc106b39555122d50ffe2d1f0075062786a740e5245544e1
   requires_python: '>=3.8'
   editable: true
 - kind: conda
