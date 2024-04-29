@@ -8,7 +8,7 @@ import ruamel.yaml
 from typing import Any, Mapping, Sequence
 import requests
 from conda.models.version import VersionOrder
-from functools import cache
+from functools import lru_cache
 from jsonschema import Draft202012Validator
 from jsonschema import ValidationError
 from textwrap import indent
@@ -26,15 +26,17 @@ JINJA_VAR_PAT = re.compile(r"\${{(.*?)}}")
 
 
 def _format_validation_msg(error: ValidationError):
+    import pdb
+
+    pdb.set_trace()
     return cleandoc(
         f"""
-        In recipe.yaml: `{error.instance}`.
-{indent(error.message, " " * 12 + "> ")}
+        In recipe.yaml: \n{indent(error.message, " " * 12 + "> ")}
         """
     )
 
 
-@cache
+@lru_cache
 def get_recipe_schema() -> dict[Any, Any]:
     return requests.get(SCHEMA_URL).json()
 
