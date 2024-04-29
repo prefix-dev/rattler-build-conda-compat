@@ -1,6 +1,4 @@
 from contextlib import contextmanager
-from os import PathLike
-from pathlib import Path
 import yaml
 from typing import Any, Union
 

@@ -89,12 +89,7 @@ class MetaData(CondaMetaData):
 
                 if variants:
                     run_args.extend(["-m", variants_path])
-
-                subprocess.run(
-                    run_args,
-                    check=True,
-                    stdout=outfile,
-                )
+                subprocess.run(run_args, check=True, stdout=outfile, env=os.environ)
 
                 outfile.seek(0)
                 content = outfile.read()

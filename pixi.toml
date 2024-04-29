@@ -31,6 +31,7 @@ ruff = "*"
 
 [feature.test.tasks]
 test = "pytest"
+snapshot_update = "pytest --snapshot-update"
 
 
 [environments]

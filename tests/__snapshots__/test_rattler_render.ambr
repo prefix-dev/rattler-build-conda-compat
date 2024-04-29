@@ -1,4 +1,114 @@
 # serializer version: 1
+# name: test_environ_is_passed_to_rattler_build
+  list([
+    CommentedMap({
+      'package': CommentedMap({
+        'name': 'py-test',
+        'version': '1.0.0',
+      }),
+      'build': CommentedMap({
+        'skip': CommentedSeq([
+          "env.get('TEST_SHOULD_BE_PASSED') == 'false'",
+        ]),
+      }),
+      'requirements': CommentedMap({
+        'build': CommentedSeq([
+          "${{ compiler('c') }}",
+          "${{ compiler('cuda') }}",
+        ]),
+        'host': CommentedSeq([
+          'python',
+        ]),
+        'run': CommentedSeq([
+          'python',
+        ]),
+      }),
+      'about': dict({
+      }),
+      'extra': dict({
+        'final': True,
+      }),
+    }),
+  ])
+# ---
+# name: test_environ_is_passed_to_rattler_build.1
+  list([
+    dict({
+      'about': dict({
+      }),
+      'build_configuration': dict({
+        'build_platform': 'linux-64',
+        'channels': list([
+          'conda-forge',
+        ]),
+        'directories': dict({
+          'build_dir': '/Users/graf/projects/oss/rattler-build-conda-compat/output/bld/rattler-build_py-test_1714379973',
+          'build_prefix': '/Users/graf/projects/oss/rattler-build-conda-compat/output/bld/rattler-build_py-test_1714379973/build_env',
+          'host_prefix': '/Users/graf/projects/oss/rattler-build-conda-compat/output/bld/rattler-build_py-test_1714379973/host_env_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_',
+          'work_dir': '/Users/graf/projects/oss/rattler-build-conda-compat/output/bld/rattler-build_py-test_1714379973/work',
+        }),
+        'hash': dict({
+          'hash': 'b0f4dca',
+          'hash_input': '{"target_platform": "linux-64"}',
+          'hash_prefix': '',
+        }),
+        'host_platform': 'linux-64',
+        'packaging_settings': dict({
+          'archive_type': 'conda',
+          'compression_level': 15,
+          'compression_threads': 1,
+        }),
+        'subpackages': dict({
+          'py-test': dict({
+            'build_string': 'hb0f4dca_0',
+            'name': 'py-test',
+            'version': '1.0.0',
+          }),
+        }),
+        'target_platform': 'linux-64',
+        'timestamp': '2024-04-29T08:39:33.230326Z',
+        'variant': dict({
+          'target_platform': 'linux-64',
+        }),
+      }),
+      'extra': dict({
+        'final': True,
+      }),
+      'finalized_dependencies': None,
+      'finalized_sources': None,
+      'recipe': dict({
+        'build': dict({
+          'number': 0,
+          'string': 'hb0f4dca_0',
+        }),
+        'package': dict({
+          'name': 'py-test',
+          'version': '1.0.0',
+        }),
+        'requirements': dict({
+          'build': list([
+            dict({
+              'compiler': 'c',
+            }),
+            dict({
+              'compiler': 'cuda',
+            }),
+          ]),
+          'host': list([
+            'python',
+          ]),
+          'run': list([
+            'python',
+          ]),
+        }),
+        'schema_version': 1,
+      }),
+      'system_tools': dict({
+        'rattler_build': '0.15.0',
+      }),
+    }),
+  ])
+# ---
 # name: test_render_recipe
   list([
     dict({
