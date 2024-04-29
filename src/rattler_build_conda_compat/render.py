@@ -120,7 +120,7 @@ class MetaData(CondaMetaData):
 
         return set(used_vars)
 
-    def get_used_variant(self) -> dict:
+    def get_used_variant(self) -> Dict:
         if "build_configuration" not in self.meta:
             # it could be that we skip build for this platform
             # so no variants have been discovered
