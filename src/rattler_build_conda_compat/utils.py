@@ -163,12 +163,12 @@ def find_recipe(path):
 
 def has_recipe(recipe_dir: Path) -> bool:
     """
-    
+
     verify if recipe_dir contains recipe.yaml
 
     it is used to detect whetever old or recipe should be used
 
-    
+
     """
     try:
         recipe_path = find_recipe(recipe_dir)

@@ -20,6 +20,18 @@ def python_recipe(tmpdir):
 
 
 @pytest.fixture
+def env_recipe(tmpdir):
+    recipe_dir = tmpdir / "recipe"
+    mkdir(recipe_dir)
+
+    env_recipe = Path("tests/data/env_recipe.yaml").read_text()
+    recipe_yaml: Path = recipe_dir / "recipe.yaml"
+    recipe_yaml.write_text(env_recipe, encoding="utf8")
+
+    yield recipe_dir
+
+
+@pytest.fixture
 def unix_namespace():
     namespace = {"linux-64": True, "unix": True}
 

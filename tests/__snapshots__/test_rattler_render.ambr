@@ -1,4 +1,41 @@
 # serializer version: 1
+# name: test_environ_is_passed_to_rattler_build
+  list([
+    CommentedMap({
+      'package': CommentedMap({
+        'name': 'py-test',
+        'version': '1.0.0',
+      }),
+      'build': CommentedMap({
+        'skip': CommentedSeq([
+          "env.get('TEST_SHOULD_BE_PASSED') == 'false'",
+        ]),
+      }),
+      'requirements': CommentedMap({
+        'build': CommentedSeq([
+          "${{ compiler('c') }}",
+          "${{ compiler('cuda') }}",
+        ]),
+        'host': CommentedSeq([
+          'python',
+        ]),
+        'run': CommentedSeq([
+          'python',
+        ]),
+      }),
+      'about': dict({
+      }),
+      'extra': dict({
+        'final': True,
+      }),
+    }),
+  ])
+# ---
+# name: test_environ_is_passed_to_rattler_build.1
+  dict({
+    'target_platform': 'linux-64',
+  })
+# ---
 # name: test_render_recipe
   list([
     dict({
