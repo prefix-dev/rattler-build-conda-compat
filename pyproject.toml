@@ -10,6 +10,6 @@ description="A package for exposing rattler-build API for conda-smithy"
 readme = "README.md"
 authors = [{name = "Nichita Morcotilo", email = "nichita@prefix.dev"}]
 license = {file = "LICENSE.txt"}
-version = "0.0.4"
+version = "0.0.5"
 
 requires-python = ">=3.8"
