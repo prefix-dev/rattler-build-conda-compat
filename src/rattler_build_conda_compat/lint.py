@@ -26,9 +26,6 @@ JINJA_VAR_PAT = re.compile(r"\${{(.*?)}}")
 
 
 def _format_validation_msg(error: ValidationError):
-    import pdb
-
-    pdb.set_trace()
     return cleandoc(
         f"""
         In recipe.yaml: \n{indent(error.message, " " * 12 + "> ")}
