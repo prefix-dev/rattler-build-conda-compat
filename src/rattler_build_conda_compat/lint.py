@@ -5,7 +5,7 @@ import os.path
 import tomli
 import github
 import ruamel.yaml
-from typing import Any, Mapping, Sequence
+from typing import Any, Dict, Mapping, Sequence, List
 import requests
 from conda.models.version import VersionOrder
 from functools import lru_cache
@@ -26,9 +26,6 @@ JINJA_VAR_PAT = re.compile(r"\${{(.*?)}}")
 
 
 def _format_validation_msg(error: ValidationError):
-    import pdb
-
-    pdb.set_trace()
     return cleandoc(
         f"""
         In recipe.yaml: \n{indent(error.message, " " * 12 + "> ")}
@@ -37,7 +34,7 @@ def _format_validation_msg(error: ValidationError):
 
 
 @lru_cache
-def get_recipe_schema() -> dict[Any, Any]:
+def get_recipe_schema() -> Dict[Any, Any]:
     return requests.get(SCHEMA_URL).json()
 
 
@@ -91,9 +88,7 @@ def lint_recipe_maintainers(maintainers_section, lints):
         lints.append("Recipe maintainers should be a json list.")
 
 
-def lint_recipe_tests(
-    test_section=dict(), outputs_section=list()
-) -> (list[str], list[str]):
+def lint_recipe_tests(test_section=dict(), outputs_section=list()):
     TEST_KEYS = {"script", "python"}
     lints = []
     hints = []
@@ -121,19 +116,19 @@ def lint_recipe_tests(
     return lints, hints
 
 
-def lint_license_not_unknown(license: str, lints: list):
+def lint_license_not_unknown(license: str, lints: List):
     license = license.lower()
     if "unknown" == license.strip():
         lints.append("The recipe license cannot be unknown.")
 
 
-def lint_build_number(build_section: dict, lints: list):
+def lint_build_number(build_section: Dict, lints: List):
     build_number = build_section.get("number", None)
     if build_number is None:
         lints.append("The recipe must have a `build/number` section.")
 
 
-def lint_requirements_order(requirements_section: dict, lints: list):
+def lint_requirements_order(requirements_section: Dict, lints: List):
     seen_requirements = [k for k in requirements_section if k in REQUIREMENTS_ORDER]
     requirements_order_sorted = sorted(seen_requirements, key=REQUIREMENTS_ORDER.index)
     if seen_requirements != requirements_order_sorted:

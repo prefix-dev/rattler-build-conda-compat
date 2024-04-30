@@ -120,7 +120,7 @@ class MetaData(CondaMetaData):
 
         return set(used_vars)
 
-    def get_used_variant(self) -> dict:
+    def get_used_variant(self) -> Dict:
         if "build_configuration" not in self.meta:
             # it could be that we skip build for this platform
             # so no variants have been discovered
@@ -145,7 +145,13 @@ class MetaData(CondaMetaData):
         return used_variant_key_normalized
 
     def get_used_loop_vars(self, force_top_level=False, force_global=False):
-        return self.get_used_vars(force_top_level, force_global)
+        return {
+            var
+            for var in self.get_used_vars(
+                force_top_level=force_top_level, force_global=force_global
+            )
+            if var in self.get_loop_vars()
+        }
 
     def get_section(self, name):
         if not self._rendered:

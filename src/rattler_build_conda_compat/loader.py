@@ -1,6 +1,6 @@
 from contextlib import contextmanager
 import yaml
-from typing import Any, Union
+from typing import Any, Dict, Union
 
 
 class RecipeLoader(yaml.BaseLoader):
@@ -87,7 +87,7 @@ def parse_recipe_config_file(path, namespace):
     return remove_empty_keys(content)
 
 
-def load_all_requirements(content) -> dict:
+def load_all_requirements(content) -> Dict[str, Any]:
     # with open(path) as f:
     #     content = yaml.load(f, Loader=yaml.BaseLoader)
 
