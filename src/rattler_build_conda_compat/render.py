@@ -118,9 +118,6 @@ class MetaData(CondaMetaData):
         if "target_platform" in self.config.variant and self.noarch:
             used_vars.remove("target_platform")
 
-        # # if "channel_targets" not in self.config.variant:
-        # used_vars.remove("channel_targets")
-
         return set(used_vars)
 
     def get_used_variant(self) -> Dict:
