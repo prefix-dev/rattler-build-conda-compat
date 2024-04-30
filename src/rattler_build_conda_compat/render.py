@@ -145,8 +145,6 @@ class MetaData(CondaMetaData):
         return used_variant_key_normalized
 
     def get_used_loop_vars(self, force_top_level=False, force_global=False):
-        # return self.get_used_vars(force_top_level, force_global)
-
         return {
             var
             for var in self.get_used_vars(
