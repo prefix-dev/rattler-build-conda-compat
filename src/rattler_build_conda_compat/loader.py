@@ -88,9 +88,6 @@ def parse_recipe_config_file(path, namespace):
 
 
 def load_all_requirements(content) -> Dict[str, Any]:
-    # with open(path) as f:
-    #     content = yaml.load(f, Loader=yaml.BaseLoader)
-
     requirements_section = dict(content.get("requirements", {}))
     if not requirements_section:
         return {}
