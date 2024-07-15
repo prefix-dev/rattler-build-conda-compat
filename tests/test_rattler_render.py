@@ -34,8 +34,8 @@ def test_environ_is_passed_to_rattler_build(env_recipe, snapshot):
 
         all_used_variants = [meta[0].meta for meta in rendered]
         assert len(all_used_variants) == 1
-        # for this scenario recipe should be rendered        
-        assert snapshot == all_used_variants[0]['build_configuration']['variant']
+        # for this scenario recipe should be rendered
+        assert snapshot == all_used_variants[0]["build_configuration"]["variant"]
 
     finally:
         os.environ.pop("TEST_SHOULD_BE_PASSED", None)
