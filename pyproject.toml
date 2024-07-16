@@ -33,7 +33,6 @@ ignore = [
 ]
 exclude = [
     "src/rattler_build_conda_compat/lint.py",
-    "src/rattler_build_conda_compat/loader.py",
     "src/rattler_build_conda_compat/render.py",
     "src/rattler_build_conda_compat/utils.py",
 ]

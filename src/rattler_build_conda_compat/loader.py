@@ -1,19 +1,27 @@
+from __future__ import annotations
+
 from contextlib import contextmanager
+from typing import TYPE_CHECKING, Any, Iterator, Self
+
 import yaml
-from typing import Any, Dict, Union
+
+if TYPE_CHECKING:
+    from os import PathLike
 
 
 class RecipeLoader(yaml.BaseLoader):
     @classmethod
     @contextmanager
-    def with_namespace(cls, namespace):
+    def with_namespace(cls: Self, namespace: dict[str, Any] | None) -> Iterator[None]:
         try:
             cls._namespace = namespace
             yield
         finally:
             del cls._namespace
 
-    def construct_sequence(self, node: Any, deep: bool = False) -> Any:
+    def construct_sequence(  # noqa: C901
+        self: RecipeLoader, node: yaml.Node, deep: bool = False  # noqa: FBT002, FBT001
+    ) -> list[yaml.Node]:
         """deep is True when creating an object/mapping recursively,
         in that case want the underlying elements available during construction
         """
@@ -31,9 +39,8 @@ class RecipeLoader(yaml.BaseLoader):
                         then_node_key, then_node_value = child_node.value[idx + 1]
 
                         if then_node_key.value != "then":
-                            raise ValueError(
-                                "cannot have if without then, please reformat your variant file"
-                            )
+                            msg = "cannot have if without then, please reformat your variant file"
+                            raise ValueError(msg)
 
                         try:
                             _, else_node_value = child_node.value[idx + 2]
@@ -42,7 +49,7 @@ class RecipeLoader(yaml.BaseLoader):
 
                         to_be_eval = f"{value_node.value}"
 
-                        evaled = eval(to_be_eval, self._namespace)
+                        evaled = eval(to_be_eval, self._namespace)  # noqa: S307
                         if evaled:
                             the_evaluated_one = then_node_value
                         elif else_node_value:
@@ -56,7 +63,7 @@ class RecipeLoader(yaml.BaseLoader):
                             node.value.remove(child_node)
 
         if not isinstance(node, yaml.SequenceNode):
-            raise Exception(
+            raise TypeError(
                 None,
                 None,
                 f"expected a sequence node, but found {node.id!s}",
@@ -66,11 +73,11 @@ class RecipeLoader(yaml.BaseLoader):
         return [self.construct_object(child, deep=deep) for child in node.value]
 
 
-def load_yaml(content: Union[str, bytes]):
-    return yaml.load(content, Loader=yaml.BaseLoader)
+def load_yaml(content: str | bytes) -> Any:  # noqa: ANN401
+    return yaml.load(content, Loader=yaml.BaseLoader)  # noqa: S506
 
 
-def remove_empty_keys(variant_dict):
+def remove_empty_keys(variant_dict: dict[str, Any]) -> dict[str, Any]:
     filtered_dict = {}
     for key, value in variant_dict.items():
         if isinstance(value, list) and len(value) == 0:
@@ -80,14 +87,15 @@ def remove_empty_keys(variant_dict):
     return filtered_dict
 
 
-def parse_recipe_config_file(path, namespace):
-    with open(path) as f:
-        with RecipeLoader.with_namespace(namespace):
-            content = yaml.load(f, Loader=RecipeLoader)
+def parse_recipe_config_file(
+    path: PathLike[str], namespace: dict[str, Any] | None
+) -> dict[str, Any]:
+    with open(path) as f, RecipeLoader.with_namespace(namespace):
+        content = yaml.load(f, Loader=RecipeLoader)  # noqa: S506
     return remove_empty_keys(content)
 
 
-def load_all_requirements(content) -> Dict[str, Any]:
+def load_all_requirements(content: dict[str, Any]) -> dict[str, Any]:
     requirements_section = dict(content.get("requirements", {}))
     if not requirements_section:
         return {}
