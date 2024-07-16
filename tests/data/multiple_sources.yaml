@@ -1,0 +1,5 @@
+source:
+  - url: https://foo.com
+    sha256: 1234567890abcdef
+  - url: https://bar.com
+    sha256: 1234567890abcdef

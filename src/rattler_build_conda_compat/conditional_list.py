@@ -14,7 +14,7 @@ class IfStatement(Generic[T]):
 ConditionalList = Union[T, "IfStatement[T]", list[Union[T, "IfStatement[T]"]]]
 
 
-def visit_conditional_list(
+def visit_conditional_list(  # noqa: C901
     value: ConditionalList[T], evaluator: Callable[[Any], bool] | None = None
 ) -> Generator[T, None, None]:
     """
@@ -36,23 +36,29 @@ def visit_conditional_list(
         else:
             yield value
 
-    value = value if isinstance(value, list) else [value]
+    if not isinstance(value, list):
+        value = [value]
 
     for element in value:
         if isinstance(element, dict):
             if (expr := element.get("if", None)) is not None:
                 then = element.get("then")
                 otherwise = element.get("else")
+                # Evaluate the if expression if the evaluator is provided
                 if evaluator:
                     if evaluator(expr):
                         yield from yield_from_list(then)
                     elif otherwise:
                         yield from yield_from_list(otherwise)
+                # Otherwise, just yield the branches
                 else:
                     yield from yield_from_list(then)
                     if otherwise:
                         yield from yield_from_list(otherwise)
             else:
+                # In this case its not an if statement
                 yield element
+        # If the element is not a dictionary, just yield it
         else:
+            # (tim) I get a pyright error here, but I don't know how to fix it
             yield element
