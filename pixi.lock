@@ -5554,7 +5554,7 @@ packages:
   name: rattler-build-conda-compat
   version: 0.0.6
   path: .
-  sha256: 3474bc3e1d38767b691b1c2ab527e002c30baa2d329b2ab2c91258a7e546474a
+  sha256: 6bf2bcd3e66ea117fda7ff83995b6d1dec8a3a0480f0f7ee7a6d83bfb8faa9fa
   requires_python: '>=3.8'
   editable: true
 - kind: conda

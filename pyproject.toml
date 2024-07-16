@@ -29,6 +29,7 @@ ignore = [
     "ISC001", # https://docs.astral.sh/ruff/rules/single-line-implicit-string-concatenation/
     "T201",   # https://docs.astral.sh/ruff/rules/print/
     "A003",   # https://docs.astral.sh/ruff/rules/builtin-attribute-shadowing/
+    "PTH",    # We dont want to change the API to pathlib just yet
 ]
 exclude = [
     "src/rattler_build_conda_compat/lint.py",
@@ -36,6 +37,9 @@ exclude = [
     "src/rattler_build_conda_compat/render.py",
     "src/rattler_build_conda_compat/utils.py",
 ]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*.py" = ["S101", "INP001"]
 
 [tool.pyright]
 venvPath = ".pixi/envs"
