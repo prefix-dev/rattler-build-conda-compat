@@ -14,7 +14,7 @@ class IfStatement(Generic[T]):
 ConditionalList = Union[T, "IfStatement[T]", list[Union[T, "IfStatement[T]"]]]
 
 
-def visit_conditional_list(
+def visit_conditional_list(  # noqa: C901
     value: ConditionalList[T], evaluator: Callable[[Any], bool] | None = None
 ) -> Generator[T, None, None]:
     """
