@@ -1,10 +1,8 @@
 from __future__ import annotations
 
-from typing import Any, Callable, Generator, Generic, TypeVar, Union
+from typing import Any, Callable, Generator, Generic, TypeVar, Union, List, cast
 
 T = TypeVar("T")
-
-
 class IfStatement(Generic[T]):
     if_: Any
     then: T | list[T]
@@ -36,23 +34,29 @@ def visit_conditional_list(
         else:
             yield value
 
-    value = value if isinstance(value, list) else [value]
+    if not isinstance(value, list):
+        value = [value]
 
     for element in value:
         if isinstance(element, dict):
             if (expr := element.get("if", None)) is not None:
                 then = element.get("then")
                 otherwise = element.get("else")
+                # Evaluate the if expression if the evaluator is provided
                 if evaluator:
                     if evaluator(expr):
                         yield from yield_from_list(then)
                     elif otherwise:
                         yield from yield_from_list(otherwise)
+                # Otherwise, just yield the branches
                 else:
                     yield from yield_from_list(then)
                     if otherwise:
                         yield from yield_from_list(otherwise)
             else:
+                # In this case its not an if statement
                 yield element
+        # If the element is not a dictionary, just yield it
         else:
+            # (tim) I get a pyright error here, but I don't know how to fix it
             yield element
