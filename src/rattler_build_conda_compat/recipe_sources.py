@@ -8,7 +8,7 @@ OptionalUrlList = str | list[str] | None
 class Source(TypedDict):
     url: NotRequired[str]
 
-def get_all_url_sources(recipe: Mapping[Any, Any]) -> Generator[str, None, None]:
+def get_all_url_sources(recipe: Mapping[Any, Any]) -> Iterator[str]:
     """
     Get all url sources from the recipe. This can be from a list of sources, a single source, or conditional and its branches.
 
