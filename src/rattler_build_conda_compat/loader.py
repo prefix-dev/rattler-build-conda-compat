@@ -5,6 +5,8 @@ from typing import TYPE_CHECKING, Any, Iterator, Self
 
 import yaml
 
+from rattler_build_conda_compat.conditional_list import visit_conditional_list
+
 if TYPE_CHECKING:
     from os import PathLike
 
@@ -104,15 +106,7 @@ def load_all_requirements(content: dict[str, Any]) -> dict[str, Any]:
         section_reqs = requirements_section[section]
         if not section_reqs:
             continue
-        expanded_reqs = []
-        for req in section_reqs:
-            if isinstance(req, dict):
-                then_reqs = req.get("then", [])
-                else_reqs = req.get("else", [])
-                expanded_reqs.extend(then_reqs)
-                expanded_reqs.extend(else_reqs)
-            else:
-                expanded_reqs.append(req)
-        requirements_section[section] = expanded_reqs
+
+        requirements_section[section] = list(visit_conditional_list(section_reqs))
 
     return requirements_section
