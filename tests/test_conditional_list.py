@@ -1,7 +1,7 @@
 from rattler_build_conda_compat.conditional_list import visit_conditional_list
 
 
-def test_visit_conditional_list():
+def test_visit_conditional_list() -> None:
     # Plain lists or objects
     assert list(visit_conditional_list([1, 2, 3])) == [1, 2, 3]
     assert list(visit_conditional_list(1)) == [1]
@@ -21,9 +21,12 @@ def test_visit_conditional_list():
         2,
         3,
     ]
-    assert list(
-        visit_conditional_list({"if": True, "then": [1, 2], "else": [3, 4]})
-    ) == [1, 2, 3, 4]
+    assert list(visit_conditional_list({"if": True, "then": [1, 2], "else": [3, 4]})) == [
+        1,
+        2,
+        3,
+        4,
+    ]
 
     # Multiple if statements
     assert list(

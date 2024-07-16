@@ -15,9 +15,7 @@ from textwrap import indent
 
 from rattler_build_conda_compat.loader import load_yaml
 
-SCHEMA_URL = (
-    "https://raw.githubusercontent.com/prefix-dev/recipe-format/main/schema.json"
-)
+SCHEMA_URL = "https://raw.githubusercontent.com/prefix-dev/recipe-format/main/schema.json"
 
 REQUIREMENTS_ORDER = ["build", "host", "run"]
 
@@ -69,9 +67,7 @@ def lint_about_contents(about_section, lints):
     for about_item in ["homepage", "license", "summary"]:
         # if the section doesn't exist, or is just empty, lint it.
         if not about_section.get(about_item, ""):
-            lints.append(
-                "The {} item is expected in the about section." "".format(about_item)
-            )
+            lints.append("The {} item is expected in the about section." "".format(about_item))
 
 
 def lint_recipe_maintainers(maintainers_section, lints):
@@ -81,10 +77,7 @@ def lint_recipe_maintainers(maintainers_section, lints):
             "the `extra/recipe-maintainers` section."
         )
 
-    if not (
-        isinstance(maintainers_section, Sequence)
-        and not isinstance(maintainers_section, str)
-    ):
+    if not (isinstance(maintainers_section, Sequence) and not isinstance(maintainers_section, str)):
         lints.append("Recipe maintainers should be a json list.")
 
 
@@ -105,8 +98,9 @@ def lint_recipe_tests(test_section=dict(), outputs_section=list()):
                     has_outputs_test = True
                 else:
                     no_test_hints.append(
-                        "It looks like the '{}' output doesn't "
-                        "have any tests.".format(section.get("name", "???"))
+                        "It looks like the '{}' output doesn't " "have any tests.".format(
+                            section.get("name", "???")
+                        )
                     )
             if has_outputs_test:
                 hints.extend(no_test_hints)
@@ -146,9 +140,7 @@ def lint_package_version(package_section: dict, context_section: dict):
     package_ver = str(package_section.get("version"))
     context_ver = str(context_section.get("version"))
     ver = (
-        package_ver
-        if package_ver is not None and not package_ver.startswith("$")
-        else context_ver
+        package_ver if package_ver is not None and not package_ver.startswith("$") else context_ver
     )
 
     try:
@@ -160,9 +152,7 @@ def lint_package_version(package_section: dict, context_section: dict):
 
 def lint_files_have_hash(sources_section: list, lints: list):
     for source_section in sources_section:
-        if "url" in source_section and not (
-            {"sha1", "sha256", "md5"} & set(source_section.keys())
-        ):
+        if "url" in source_section and not ({"sha1", "sha256", "md5"} & set(source_section.keys())):
             lints.append(
                 "When defining a source/url please add a sha256, sha1 "
                 "or md5 checksum (sha256 preferably)."
@@ -208,9 +198,7 @@ def lint_legacy_patterns(requirements_section):
     return lints
 
 
-def lint_usage_of_selectors_for_noarch(
-    noarch_value, build_section, requirements_section
-):
+def lint_usage_of_selectors_for_noarch(noarch_value, build_section, requirements_section):
     lints = []
     for section in requirements_section:
         section_requirements = requirements_section[section]
@@ -307,9 +295,7 @@ def lint_non_noarch_dont_constrain_python_and_rbase(requirements_section):
         filtered_run_reqs = [req for req in run_reqs if req.startswith(f"{language}")]
 
         if filtered_host_reqs and not filtered_run_reqs:
-            lints.append(
-                f"If {language} is a host requirement, it should be a run requirement."
-            )
+            lints.append(f"If {language} is a host requirement, it should be a run requirement.")
 
         for reqs in [filtered_host_reqs, filtered_run_reqs]:
             if language not in reqs:
@@ -401,9 +387,7 @@ def hint_noarch_usage(build_section, requirement_section: dict):
             no_arch_possible = False
 
         for _, section_requirements in requirement_section.items():
-            if any(
-                isinstance(requirement, dict) for requirement in section_requirements
-            ):
+            if any(isinstance(requirement, dict) for requirement in section_requirements):
                 no_arch_possible = False
                 break
 
@@ -480,15 +464,11 @@ def run_conda_forge_specific(
 
         url = None
         if isinstance(sources_section, dict):
-            if str(sources_section.get("url")).startswith(
-                "https://pypi.io/packages/source/"
-            ):
+            if str(sources_section.get("url")).startswith("https://pypi.io/packages/source/"):
                 url = sources_section["url"]
         else:
             for source_section in sources_section:
-                if str(source_section.get("url")).startswith(
-                    "https://pypi.io/packages/source/"
-                ):
+                if str(source_section.get("url")).startswith("https://pypi.io/packages/source/"):
                     url = source_section["url"]
 
         if url:
@@ -519,21 +499,14 @@ def run_conda_forge_specific(
 
     # 3: if the recipe dir is inside the example dir
     if recipe_dir is not None and "recipes/example/" in recipe_dir:
-        lints.append(
-            "Please move the recipe out of the example dir and " "into its own dir."
-        )
+        lints.append("Please move the recipe out of the example dir and " "into its own dir.")
 
     # 4: Do not delete example recipe
     if is_staged_recipes and recipe_dir is not None:
-        example_meta_fname = os.path.abspath(
-            os.path.join(recipe_dir, "..", "example", "meta.yaml")
-        )
+        example_meta_fname = os.path.abspath(os.path.join(recipe_dir, "..", "example", "meta.yaml"))
 
         if not os.path.exists(example_meta_fname):
-            msg = (
-                "Please do not delete the example recipe found in "
-                "`recipes/example/meta.yaml`."
-            )
+            msg = "Please do not delete the example recipe found in " "`recipes/example/meta.yaml`."
 
             if msg not in lints:
                 lints.append(msg)

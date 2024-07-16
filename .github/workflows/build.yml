@@ -17,6 +17,12 @@ jobs:
           run: | 
            pixi install
 
+        - name: format
+          run: pixi run fmt-check
+
+        - name: lint
+          run: pixi run lint-check
+
         - name: run tests
           run: | 
            pixi run -e test pytest

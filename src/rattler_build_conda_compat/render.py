@@ -66,9 +66,9 @@ class MetaData(CondaMetaData):
         platform_and_arch = f"{self.config.platform}-{self.config.arch}"
 
         try:
-            with tempfile.NamedTemporaryFile(
-                mode="w+"
-            ) as outfile, tempfile.NamedTemporaryFile(mode="w") as variants_file:
+            with tempfile.NamedTemporaryFile(mode="w+") as outfile, tempfile.NamedTemporaryFile(
+                mode="w"
+            ) as variants_file:
                 # dump variants in our variants that will be used to generate recipe
                 if variants:
                     yaml.dump(variants, variants_file, default_flow_style=False)
@@ -107,8 +107,7 @@ class MetaData(CondaMetaData):
             return set()
 
         used_vars = [
-            var.replace("-", "_")
-            for var in self.meta["build_configuration"]["variant"].keys()
+            var.replace("-", "_") for var in self.meta["build_configuration"]["variant"].keys()
         ]
 
         # in conda-build target-platform is not returned as part of yaml vars

@@ -1,9 +1,10 @@
-import pytest
 from os import mkdir
 from pathlib import Path
 
+import pytest
 
-@pytest.fixture
+
+@pytest.fixture()
 def python_recipe(tmpdir):
     recipe_dir = tmpdir / "recipe"
     mkdir(recipe_dir)
@@ -16,10 +17,10 @@ def python_recipe(tmpdir):
     variants_yaml: Path = recipe_dir / "variants.yaml"
     variants_yaml.write_text(variants, encoding="utf8")
 
-    yield recipe_dir
+    return recipe_dir
 
 
-@pytest.fixture
+@pytest.fixture()
 def env_recipe(tmpdir):
     recipe_dir = tmpdir / "recipe"
     mkdir(recipe_dir)
@@ -28,17 +29,15 @@ def env_recipe(tmpdir):
     recipe_yaml: Path = recipe_dir / "recipe.yaml"
     recipe_yaml.write_text(env_recipe, encoding="utf8")
 
-    yield recipe_dir
+    return recipe_dir
 
 
-@pytest.fixture
+@pytest.fixture()
 def unix_namespace():
-    namespace = {"linux-64": True, "unix": True}
-
-    return namespace
+    return {"linux-64": True, "unix": True}
 
 
-@pytest.fixture
+@pytest.fixture()
 def recipe_dir(tmpdir):
     py_recipe = Path("tests/data/py_recipe.yaml").read_text()
     recipe_dir = tmpdir / "recipe"
@@ -46,10 +45,10 @@ def recipe_dir(tmpdir):
 
     (recipe_dir / "recipe.yaml").write_text(py_recipe, encoding="utf8")
 
-    yield recipe_dir
+    return recipe_dir
 
 
-@pytest.fixture
+@pytest.fixture()
 def old_recipe_dir(tmpdir):
     recipe_dir = tmpdir / "recipe"
     mkdir(recipe_dir)
@@ -57,4 +56,4 @@ def old_recipe_dir(tmpdir):
     meta = Path(recipe_dir / "meta.yaml")
     meta.touch()
 
-    yield recipe_dir
+    return recipe_dir
