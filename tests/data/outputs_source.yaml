@@ -1,0 +1,11 @@
+outputs:
+  source:
+    - if: foo
+      then:
+        - url: https://foo.com
+    - if: bla
+      then:
+        - url: https://bar.com
+      else:
+        - url: https://baz.com
+    - url: https://qux.com

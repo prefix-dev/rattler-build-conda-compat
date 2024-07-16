@@ -1,0 +1,6 @@
+source:
+  - if: windows
+    then:
+      - url: https://foo.com
+    else:
+      - url: https://bar.com

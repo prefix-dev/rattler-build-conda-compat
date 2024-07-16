@@ -1,8 +1,10 @@
 from __future__ import annotations
 
-from typing import Any, Callable, Generator, Generic, TypeVar, Union, List, cast
+from typing import Any, Callable, Generator, Generic, TypeVar, Union
 
 T = TypeVar("T")
+
+
 class IfStatement(Generic[T]):
     if_: Any
     then: T | list[T]
