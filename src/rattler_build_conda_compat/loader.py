@@ -22,7 +22,9 @@ class RecipeLoader(yaml.BaseLoader):
             del cls._namespace
 
     def construct_sequence(  # noqa: C901
-        self: Self, node: yaml.Node, deep: bool = False  # noqa: FBT002, FBT001
+        self: Self,
+        node: yaml.Node,
+        deep: bool = False,  # noqa: FBT002, FBT001
     ) -> list[yaml.Node]:
         """deep is True when creating an object/mapping recursively,
         in that case want the underlying elements available during construction
