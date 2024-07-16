@@ -6,9 +6,9 @@ from .conditional_list import ConditionalList, visit_conditional_list
 OptionalUrlList = str | list[str] | None
 
 
-# TODO @tdejager: use the actual recipe type at some point
 class Source(TypedDict):
     url: NotRequired[str]
+
 
 def get_all_url_sources(recipe: Mapping[Any, Any]) -> Iterator[str]:
     """
