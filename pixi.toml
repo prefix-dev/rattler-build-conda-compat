@@ -33,6 +33,7 @@ ruff = "*"
 test = "pytest"
 snapshot_update = "pytest --snapshot-update"
 lint = "ruff check src"
+lint-check = "ruff check --check --diff src"
 fmt = "ruff format src tests"
 fmt-check = "ruff format --check --diff src tests"
 
