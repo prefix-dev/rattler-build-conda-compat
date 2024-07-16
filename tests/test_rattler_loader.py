@@ -1,4 +1,7 @@
+from __future__ import annotations
+
 from pathlib import Path
+from typing import Any
 
 from rattler_build_conda_compat.loader import (
     load_all_requirements,
@@ -7,7 +10,7 @@ from rattler_build_conda_compat.loader import (
 )
 
 
-def test_load_variants(snapshot, unix_namespace) -> None:
+def test_load_variants(snapshot, unix_namespace: dict[str, Any]) -> None:
     variants_path = Path("tests/data/variants.yaml")
 
     loaded_variants = parse_recipe_config_file(str(variants_path), unix_namespace)

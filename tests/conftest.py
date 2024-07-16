@@ -1,11 +1,14 @@
+from __future__ import annotations
+
 from os import mkdir
 from pathlib import Path
+from typing import Any
 
 import pytest
 
 
 @pytest.fixture()
-def python_recipe(tmpdir):
+def python_recipe(tmpdir: Path) -> str:
     recipe_dir = tmpdir / "recipe"
     mkdir(recipe_dir)
 
@@ -21,7 +24,7 @@ def python_recipe(tmpdir):
 
 
 @pytest.fixture()
-def env_recipe(tmpdir):
+def env_recipe(tmpdir: Path) -> str:
     recipe_dir = tmpdir / "recipe"
     mkdir(recipe_dir)
 
@@ -33,12 +36,12 @@ def env_recipe(tmpdir):
 
 
 @pytest.fixture()
-def unix_namespace():
+def unix_namespace() -> dict[str, Any]:
     return {"linux-64": True, "unix": True}
 
 
 @pytest.fixture()
-def recipe_dir(tmpdir):
+def recipe_dir(tmpdir: Path) -> Path:
     py_recipe = Path("tests/data/py_recipe.yaml").read_text()
     recipe_dir = tmpdir / "recipe"
     mkdir(recipe_dir)
@@ -49,7 +52,7 @@ def recipe_dir(tmpdir):
 
 
 @pytest.fixture()
-def old_recipe_dir(tmpdir):
+def old_recipe_dir(tmpdir: Path) -> Path:
     recipe_dir = tmpdir / "recipe"
     mkdir(recipe_dir)
 
