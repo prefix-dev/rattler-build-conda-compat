@@ -15,7 +15,4 @@ jobs:
         with:
           environments: lint
       - name: pre-commit
-        run: pixi run pre-commit-run --color=always --show-diff-on-failure
-        env:
-          # As the rust GitHub action is better at the rust jobs it can be skipped in this job.
-          SKIP: fmt
+        run: pixi run pre-commit-run --color=always --show-diff-on-failure --all
