@@ -300,8 +300,8 @@ def lint_non_noarch_dont_constrain_python_and_rbase(requirements_section):
         for reqs in [filtered_host_reqs, filtered_run_reqs]:
             if language not in reqs:
                 for req in reqs:
-                    splitted = req.split(" ", 1)
-                    if len(splitted) > 1:
+                    split = req.split(" ", 1)
+                    if len(split) > 1:
                         constraint = req.split(" ", 1)[1]
                         if constraint.startswith(">") or constraint.startswith("<"):
                             lints.append(
