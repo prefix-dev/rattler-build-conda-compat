@@ -130,16 +130,12 @@ def find_recipe(path):
     if os.path.isfile(path):
         if os.path.basename(path) in VALID_METAS:
             return path
-        raise OSError(
-            "{} is not a valid meta file ({})".format(path, ", ".join(VALID_METAS))
-        )
+        raise OSError("{} is not a valid meta file ({})".format(path, ", ".join(VALID_METAS)))
 
     results = list(rec_glob(path, VALID_METAS, ignores=(".AppleDouble",)))
 
     if not results:
-        raise OSError(
-            "No meta files ({}) found in {}".format(", ".join(VALID_METAS), path)
-        )
+        raise OSError("No meta files ({}) found in {}".format(", ".join(VALID_METAS), path))
 
     if len(results) == 1:
         return results[0]
@@ -156,9 +152,7 @@ def find_recipe(path):
         )
         return os.path.join(path, metas[0])
 
-    raise OSError(
-        "More than one meta files ({}) found in {}".format(", ".join(VALID_METAS), path)
-    )
+    raise OSError("More than one meta files ({}) found in {}".format(", ".join(VALID_METAS), path))
 
 
 def has_recipe(recipe_dir: Path) -> bool:

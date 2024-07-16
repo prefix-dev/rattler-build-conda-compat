@@ -1,4 +1,6 @@
-from typing import Any, Callable, Generator, Generic, Optional, TypeVar, Union
+from __future__ import annotations
+
+from typing import Any, Callable, Generator, Generic, TypeVar, Union
 
 T = TypeVar("T")
 
@@ -13,7 +15,7 @@ ConditionalList = Union[T, "IfStatement[T]", list[Union[T, "IfStatement[T]"]]]
 
 
 def visit_conditional_list(
-    value: ConditionalList[T], evaluator: Optional[Callable[[Any], bool]] = None
+    value: ConditionalList[T], evaluator: Callable[[Any], bool] | None = None
 ) -> Generator[T, None, None]:
     """
     A function that yields individual branches of a conditional list.
@@ -28,7 +30,7 @@ def visit_conditional_list(
     A generator that yields the individual branches.
     """
 
-    def yield_from_list(value):
+    def yield_from_list(value: list[T] | T) -> Generator[T, None, None]:
         if isinstance(value, list):
             yield from value
         else:
@@ -36,11 +38,11 @@ def visit_conditional_list(
 
     value = value if isinstance(value, list) else [value]
 
-    for value in value:
-        if isinstance(value, dict):
-            if (expr := value.get("if", None)) is not None:
-                then = value.get("then")
-                otherwise = value.get("else")
+    for element in value:
+        if isinstance(element, dict):
+            if (expr := element.get("if", None)) is not None:
+                then = element.get("then")
+                otherwise = element.get("else")
                 if evaluator:
                     if evaluator(expr):
                         yield from yield_from_list(then)
@@ -51,6 +53,6 @@ def visit_conditional_list(
                     if otherwise:
                         yield from yield_from_list(otherwise)
             else:
-                yield value
+                yield element
         else:
-            yield value
+            yield element

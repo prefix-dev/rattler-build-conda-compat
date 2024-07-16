@@ -32,8 +32,9 @@ ruff = "*"
 [feature.test.tasks]
 test = "pytest"
 snapshot_update = "pytest --snapshot-update"
-lint = "ruff check src tests"
+lint = "ruff check src"
 fmt = "ruff format src tests"
+fmt-check = "ruff format --check --diff src tests"
 
 [environments]
 test = ["test"]
