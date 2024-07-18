@@ -11,7 +11,7 @@ platforms = ["win-64", "linux-64", "osx-64", "osx-arm64"]
 build_sdist = "pixi run python -m build --sdist"
 
 [dependencies]
-python = ">=3.8"
+python = ">=3.10"
 build = "*"
 rattler-build = "*"
 conda-build = "*"
@@ -19,6 +19,7 @@ conda-build = "*"
 conda = ">=4.2"
 pygithub = ">=2,<3"
 tomli = "*"
+typing-extensions = ">=4.12.2,<4.13"
 
 [pypi-dependencies]
 rattler-build-conda-compat = { path = ".", editable = true}
@@ -39,12 +40,16 @@ pre-commit = ">=3.7.1,<4"
 pre-commit-hooks = ">=4.6.0,<5"
 ruff = ">=0.4.8,<0.5"
 typos = ">=1.23.1,<2"
+mypy = ">=1.10.1,<1.11"
+types-pyyaml = ">=6.0.12.20240311,<6.0.13"
 
 [feature.lint.tasks]
 pre-commit-install = "pre-commit-install"
 pre-commit-run = "pre-commit run"
+type-check = "mypy"
 
 
 [environments]
 test = ["test"]
 lint = { features = ["lint"], no-default-feature = true, solve-group = "default" }
+
