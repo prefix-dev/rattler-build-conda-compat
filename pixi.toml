@@ -55,7 +55,7 @@ python = "3.11.*"
 python = "3.10.*"
 
 [environments]
-py312 = { features = ["py312"], solve-group = "py312" }
-py311 = ["py311"]
-py310 = ["py310"]
+py312 = { features = ["py312", "test"], solve-group = "py312" }
+py311 = ["py311", "test"]
+py310 = ["py310", "test"]
 lint = { features = ["lint"], no-default-feature = true, solve-group = "default" }
