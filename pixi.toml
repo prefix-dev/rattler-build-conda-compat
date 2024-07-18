@@ -23,13 +23,13 @@ typing-extensions = ">=4.12.2,<4.13"
 [pypi-dependencies]
 rattler-build-conda-compat = { path = ".", editable = true}
 
-[feature.test.dependencies]
+[feature.tests.dependencies]
 pytest = "*"
 syrupy = "*"
 ruff = "*"
 
-[feature.test.tasks]
-test = "pytest tests"
+[feature.tests.tasks]
+tests = "pytest tests"
 snapshot_update = "pytest --snapshot-update tests"
 
 [feature.lint.dependencies]
@@ -55,7 +55,7 @@ python = "3.11.*"
 python = "3.10.*"
 
 [environments]
-py312 = { features = ["py312", "test"], solve-group = "py312" }
-py311 = ["py311", "test"]
-py310 = ["py310", "test"]
+py312 = { features = ["py312", "tests"], solve-group = "py312" }
+py311 = ["py311", "tests"]
+py310 = ["py310", "tests"]
 lint = { features = ["lint"], no-default-feature = true, solve-group = "default" }

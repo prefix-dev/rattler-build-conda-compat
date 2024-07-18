@@ -25,4 +25,4 @@ jobs:
             environments: ${{ matrix.pixi-environment }}
         - name: run tests
           run: |
-           pixi run --environment ${{ matrix.pixi-environment }} test
+           pixi run --environment ${{ matrix.pixi-environment }} tests
