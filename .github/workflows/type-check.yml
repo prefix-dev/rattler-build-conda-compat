@@ -1,4 +1,4 @@
-# name: Run updater that will check for conda-forge packages
+name: Type Check
 on:
   push:
     branches: [ "main" ]
