@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 
 class RecipeLoader(yaml.BaseLoader):
-    _namespace: dict[str, Any]|None = None
+    _namespace: dict[str, Any] | None = None
 
     @classmethod
     @contextmanager
@@ -26,7 +26,7 @@ class RecipeLoader(yaml.BaseLoader):
 
     def construct_sequence(  # noqa: C901
         self,
-        node: yaml.ScalarNode|yaml.SequenceNode|yaml.MappingNode,
+        node: yaml.ScalarNode | yaml.SequenceNode | yaml.MappingNode,
         deep: bool = False,  # noqa: FBT002, FBT001
     ) -> list[yaml.ScalarNode]:
         """deep is True when creating an object/mapping recursively,

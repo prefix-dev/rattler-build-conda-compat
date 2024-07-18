@@ -42,7 +42,7 @@ def get_all_url_sources(recipe: Mapping[Any, Any]) -> Iterator[str]:
     if sources is not None:
         source_list = visit_conditional_list(sources, None)
         for source in source_list:
-            if url:=source.get("url"):
+            if url := source.get("url"):
                 yield url
 
     outputs = recipe.get("outputs", None)
@@ -57,5 +57,5 @@ def get_all_url_sources(recipe: Mapping[Any, Any]) -> Iterator[str]:
             continue
         source_list = visit_conditional_list(sources, None)
         for source in source_list:
-            if url:=source.get("url"):
+            if url := source.get("url"):
                 yield url

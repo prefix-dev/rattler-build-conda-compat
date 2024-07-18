@@ -1,6 +1,9 @@
 from __future__ import annotations
 
-from typing import Any, Callable, Generator, Generic, List, TypeVar, Union, cast
+from typing import TYPE_CHECKING, Any, Generic, TypeVar, Union, cast
+
+if TYPE_CHECKING:
+    from collections.abc import Callable, Generator
 
 T = TypeVar("T")
 K = TypeVar("K")
@@ -11,11 +14,13 @@ class IfStatement(Generic[T]):
     then: T | list[T]
     else_: T | list[T] | None
 
-ConditionalList = Union[T, IfStatement[T], List[Union[T, IfStatement[T]]]]
+
+ConditionalList = Union[T, IfStatement[T], list[T | IfStatement[T]]]  # noqa: UP007
 
 
 def visit_conditional_list(  # noqa: C901
-    value: T | IfStatement[T] | list[T | IfStatement[T]], evaluator: Callable[[Any], bool] | None = None
+    value: T | IfStatement[T] | list[T | IfStatement[T]],
+    evaluator: Callable[[Any], bool] | None = None,
 ) -> Generator[T, None, None]:
     """
     A function that yields individual branches of a conditional list.

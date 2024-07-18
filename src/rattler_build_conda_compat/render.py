@@ -68,9 +68,10 @@ class MetaData(CondaMetaData):
         platform_and_arch = f"{self.config.platform}-{self.config.arch}"
 
         try:
-            with tempfile.NamedTemporaryFile(mode="w+") as outfile, tempfile.NamedTemporaryFile(
-                mode="w"
-            ) as variants_file:
+            with (
+                tempfile.NamedTemporaryFile(mode="w+") as outfile,
+                tempfile.NamedTemporaryFile(mode="w") as variants_file,
+            ):
                 # dump variants in our variants that will be used to generate recipe
                 if variants:
                     yaml.dump(variants, variants_file, default_flow_style=False)
