@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from contextlib import contextmanager
-from typing import TYPE_CHECKING, Any, Iterator, Self
+from typing import TYPE_CHECKING, Any, Iterator
 
 import yaml
 
@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 class RecipeLoader(yaml.BaseLoader):
     @classmethod
     @contextmanager
-    def with_namespace(cls: Self, namespace: dict[str, Any] | None) -> Iterator[None]:
+    def with_namespace(cls: RecipeLoader, namespace: dict[str, Any] | None) -> Iterator[None]:
         try:
             cls._namespace = namespace
             yield
@@ -22,7 +22,7 @@ class RecipeLoader(yaml.BaseLoader):
             del cls._namespace
 
     def construct_sequence(  # noqa: C901
-        self: Self,
+        self,
         node: yaml.Node,
         deep: bool = False,  # noqa: FBT002, FBT001
     ) -> list[yaml.Node]:
