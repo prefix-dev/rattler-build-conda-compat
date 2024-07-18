@@ -7,7 +7,6 @@ channels = ["conda-forge"]
 platforms = ["win-64", "linux-64", "osx-64", "osx-arm64"]
 
 [tasks]
-
 build_sdist = "pixi run python -m build --sdist"
 
 [dependencies]
@@ -24,16 +23,14 @@ typing-extensions = ">=4.12.2,<4.13"
 [pypi-dependencies]
 rattler-build-conda-compat = { path = ".", editable = true}
 
-
-[feature.test.dependencies]
+[feature.tests.dependencies]
 pytest = "*"
 syrupy = "*"
 ruff = "*"
 
-[feature.test.tasks]
-test = "pytest"
-snapshot_update = "pytest --snapshot-update"
-
+[feature.tests.tasks]
+tests = "pytest tests"
+snapshot_update = "pytest --snapshot-update tests"
 
 [feature.lint.dependencies]
 pre-commit = ">=3.7.1,<4"
@@ -48,7 +45,17 @@ pre-commit-install = "pre-commit-install"
 pre-commit-run = "pre-commit run"
 type-check = "mypy src"
 
+[feature.py312.dependencies]
+python = "3.12.*"
+
+[feature.py311.dependencies]
+python = "3.11.*"
+
+[feature.py310.dependencies]
+python = "3.10.*"
 
 [environments]
-test = ["test"]
+py312 = { features = ["py312", "tests"], solve-group = "py312" }
+py311 = ["py311", "tests"]
+py310 = ["py310", "tests"]
 lint = { features = ["lint"], no-default-feature = true, solve-group = "default" }
