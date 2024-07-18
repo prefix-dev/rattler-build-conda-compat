@@ -1,9 +1,15 @@
 from __future__ import annotations
 
+import sys
 import typing
 from typing import Any, TypedDict
 
 from .conditional_list import ConditionalList, visit_conditional_list
+
+if sys.version_info < (3, 11):
+    from typing_extensions import NotRequired
+else:
+    from typing import NotRequired
 
 if typing.TYPE_CHECKING:
     from collections.abc import Iterator, Mapping
@@ -12,7 +18,7 @@ OptionalUrlList = str | list[str] | None
 
 
 class Source(TypedDict):
-    url: str | None
+    url: NotRequired[str]
 
 
 def get_all_url_sources(recipe: Mapping[Any, Any]) -> Iterator[str]:
