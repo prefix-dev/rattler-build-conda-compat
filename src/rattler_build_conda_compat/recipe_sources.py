@@ -43,7 +43,7 @@ def get_all_url_sources(recipe: Mapping[Any, Any]) -> Iterator[str]:
         sources = output.get("source", None)
         sources = typing.cast(ConditionalList[Source], sources)
         if sources is None:
-            return
+            continue
         sources = visit_conditional_list(sources, None)
         for source in sources:
             if "url" in source:
