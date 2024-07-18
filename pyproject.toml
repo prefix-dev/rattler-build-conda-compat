@@ -9,11 +9,13 @@ version = "0.1.2"
 readme = "README.md"
 authors = [{ name = "Nichita Morcotilo", email = "nichita@prefix.dev" }]
 license = { file = "LICENSE.txt" }
-
-requires-python = ">=3.8"
+dependencies = [
+    "typing-extensions>=4.12,<5"
+]
+requires-python = ">=3.10"
 
 [tool.ruff]
-target-version = "py38"
+target-version = "py310"
 line-length = 100
 
 [tool.ruff.format]
@@ -30,6 +32,7 @@ ignore = [
     "T201",   # https://docs.astral.sh/ruff/rules/print/
     "A003",   # https://docs.astral.sh/ruff/rules/builtin-attribute-shadowing/
     "PTH",    # We dont want to change the API to pathlib just yet
+    "ANN101"  # Deprecated
 ]
 exclude = [
     "src/rattler_build_conda_compat/lint.py",
@@ -43,3 +46,7 @@ exclude = [
 [tool.pyright]
 venvPath = ".pixi/envs"
 venv = "default"
+
+[tool.mypy]
+python_version = "3.10"
+allow_redefinition = true

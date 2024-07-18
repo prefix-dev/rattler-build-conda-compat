@@ -1,20 +1,23 @@
 from __future__ import annotations
 
 from contextlib import contextmanager
-from typing import TYPE_CHECKING, Any, Iterator, Self
+from typing import TYPE_CHECKING, Any
 
 import yaml
 
 from rattler_build_conda_compat.conditional_list import visit_conditional_list
 
 if TYPE_CHECKING:
+    from collections.abc import Iterator
     from os import PathLike
 
 
 class RecipeLoader(yaml.BaseLoader):
+    _namespace: dict[str, Any] | None = None
+
     @classmethod
     @contextmanager
-    def with_namespace(cls: Self, namespace: dict[str, Any] | None) -> Iterator[None]:
+    def with_namespace(cls: type[RecipeLoader], namespace: dict[str, Any] | None) -> Iterator[None]:
         try:
             cls._namespace = namespace
             yield
@@ -22,10 +25,10 @@ class RecipeLoader(yaml.BaseLoader):
             del cls._namespace
 
     def construct_sequence(  # noqa: C901
-        self: Self,
-        node: yaml.Node,
+        self,
+        node: yaml.ScalarNode | yaml.SequenceNode | yaml.MappingNode,
         deep: bool = False,  # noqa: FBT002, FBT001
-    ) -> list[yaml.Node]:
+    ) -> list[yaml.ScalarNode]:
         """deep is True when creating an object/mapping recursively,
         in that case want the underlying elements available during construction
         """

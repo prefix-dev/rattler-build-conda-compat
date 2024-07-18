@@ -1,7 +1,18 @@
+from __future__ import annotations
+
+import sys
 import typing
-from typing import Any, Iterator, Mapping, NotRequired, TypedDict
+from typing import Any, TypedDict
 
 from .conditional_list import ConditionalList, visit_conditional_list
+
+if sys.version_info < (3, 11):
+    from typing_extensions import NotRequired
+else:
+    from typing import NotRequired
+
+if typing.TYPE_CHECKING:
+    from collections.abc import Iterator, Mapping
 
 OptionalUrlList = str | list[str] | None
 
@@ -29,10 +40,10 @@ def get_all_url_sources(recipe: Mapping[Any, Any]) -> Iterator[str]:
 
     # Try getting all url top-level sources
     if sources is not None:
-        sources = visit_conditional_list(sources, None)
-        for source in sources:
-            if "url" in source:
-                yield source["url"]
+        source_list = visit_conditional_list(sources, None)
+        for source in source_list:
+            if url := source.get("url"):
+                yield url
 
     outputs = recipe.get("outputs", None)
     if outputs is None:
@@ -44,7 +55,7 @@ def get_all_url_sources(recipe: Mapping[Any, Any]) -> Iterator[str]:
         sources = typing.cast(ConditionalList[Source], sources)
         if sources is None:
             continue
-        sources = visit_conditional_list(sources, None)
-        for source in sources:
-            if "url" in source:
-                yield source["url"]
+        source_list = visit_conditional_list(sources, None)
+        for source in source_list:
+            if url := source.get("url"):
+                yield url
