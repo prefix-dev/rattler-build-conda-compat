@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import sys
 import typing
-from typing import Any, TypedDict
+from typing import Any, List, TypedDict, Union
 
 from .conditional_list import ConditionalList, visit_conditional_list
 
@@ -14,7 +14,7 @@ else:
 if typing.TYPE_CHECKING:
     from collections.abc import Iterator, Mapping
 
-OptionalUrlList = str | list[str] | None
+OptionalUrlList = Union[str, List[str], None]
 
 
 class Source(TypedDict):
