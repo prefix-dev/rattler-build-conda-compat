@@ -10,7 +10,7 @@ platforms = ["win-64", "linux-64", "osx-64", "osx-arm64"]
 build_sdist = "pixi run python -m build --sdist"
 
 [dependencies]
-python = ">=3.10"
+python = ">=3.8"
 build = ">=0.7.0,<0.8"
 rattler-build = ">=0.18.1,<1"
 conda-build = ">=24.3.0,<25.0"
@@ -53,8 +53,16 @@ python = "3.11.*"
 [feature.py310.dependencies]
 python = "3.10.*"
 
+[feature.py39.dependencies]
+python = "3.9.*"
+
+[feature.py38.dependencies]
+python = "3.8.*"
+
 [environments]
 py312 = { features = ["py312", "tests"] }
 py311 = ["py311", "tests"]
 py310 = ["py310", "tests"]
+py39 = ["py39", "tests"]
+py38 = ["py38", "tests"]
 lint = { features = ["lint"], no-default-feature = true }

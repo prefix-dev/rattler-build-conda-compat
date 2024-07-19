@@ -68,35 +68,33 @@ class MetaData(CondaMetaData):
         platform_and_arch = f"{self.config.platform}-{self.config.arch}"
 
         try:
-            with (
-                tempfile.NamedTemporaryFile(mode="w+") as outfile,
-                tempfile.NamedTemporaryFile(mode="w") as variants_file,
-            ):
-                # dump variants in our variants that will be used to generate recipe
-                if variants:
-                    yaml.dump(variants, variants_file, default_flow_style=False)
+            with tempfile.NamedTemporaryFile(mode="w+") as outfile:
+                with tempfile.NamedTemporaryFile(mode="w") as variants_file:
+                    # dump variants in our variants that will be used to generate recipe
+                    if variants:
+                        yaml.dump(variants, variants_file, default_flow_style=False)
 
-                variants_path = variants_file.name
+                    variants_path = variants_file.name
 
-                run_args = [
-                    "rattler-build",
-                    "build",
-                    "--render-only",
-                    "--recipe",
-                    self.path,
-                    "--target-platform",
-                    platform_and_arch,
-                    "--build-platform",
-                    platform_and_arch,
-                ]
+                    run_args = [
+                        "rattler-build",
+                        "build",
+                        "--render-only",
+                        "--recipe",
+                        self.path,
+                        "--target-platform",
+                        platform_and_arch,
+                        "--build-platform",
+                        platform_and_arch,
+                    ]
 
-                if variants:
-                    run_args.extend(["-m", variants_path])
-                subprocess.run(run_args, check=True, stdout=outfile, env=os.environ)
+                    if variants:
+                        run_args.extend(["-m", variants_path])
+                    subprocess.run(run_args, check=True, stdout=outfile, env=os.environ)
 
-                outfile.seek(0)
-                content = outfile.read()
-                metadata = json.loads(content)
+                    outfile.seek(0)
+                    content = outfile.read()
+                    metadata = json.loads(content)
             return metadata if isinstance(metadata, list) else [metadata]
 
         except Exception as e:

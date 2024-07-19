@@ -12,10 +12,10 @@ license = { file = "LICENSE.txt" }
 dependencies = [
     "typing-extensions>=4.12,<5"
 ]
-requires-python = ">=3.10"
+requires-python = ">=3.8"
 
 [tool.ruff]
-target-version = "py310"
+target-version = "py38"
 line-length = 100
 
 [tool.ruff.format]
@@ -48,5 +48,5 @@ venvPath = ".pixi/envs"
 venv = "default"
 
 [tool.mypy]
-python_version = "3.10"
+python_version = "3.8"
 allow_redefinition = true
