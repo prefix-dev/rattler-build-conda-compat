@@ -43,7 +43,7 @@ exclude = [
 
 [tool.pyright]
 venvPath = ".pixi/envs"
-venv = "default"
+venv = "py312"
 
 [tool.mypy]
 python_version = "3.8"
