@@ -27,9 +27,6 @@ rattler-build-conda-compat = { path = ".", editable = true }
 pytest = ">=8.2.2,<9"
 syrupy = ">=4.6.1,<5"
 
-[feature.ruff.dependencies]
-ruff = ">=0.5.0,<0.6"
-
 [feature.tests.tasks]
 tests = "pytest tests"
 snapshot_update = "pytest --snapshot-update tests"
@@ -40,6 +37,7 @@ pre-commit-hooks = ">=4.6.0,<5"
 typos = ">=1.23.1,<2"
 mypy = ">=1.10.1,<2"
 types-pyyaml = ">=6.0.12.20240311,<6.0.13"
+ruff = ">=0.5.0,<0.6"
 
 [feature.lint.tasks]
 pre-commit-install = "pre-commit-install"
@@ -57,6 +55,6 @@ python = "3.10.*"
 
 [environments]
 py312 = { features = ["py312", "tests"] }
-py311 = ["py311", "tests", "ruff"]
-py310 = ["py310", "tests", "ruff"]
-lint = { features = ["lint", "ruff"], no-default-feature = true }
+py311 = ["py311", "tests"]
+py310 = ["py310", "tests"]
+lint = { features = ["lint"], no-default-feature = true }
