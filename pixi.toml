@@ -12,7 +12,7 @@ build_sdist = "pixi run python -m build --sdist"
 [dependencies]
 python = ">=3.10"
 build = ">=0.7.0,<0.8"
-rattler-build = ">=0.18.1,<0.19"
+rattler-build = ">=0.18.1,<1"
 conda-build = ">=24.3.0,<25.0"
 "ruamel.yaml" = ">=0.18.6,<0.19"
 conda = ">=4.2"
