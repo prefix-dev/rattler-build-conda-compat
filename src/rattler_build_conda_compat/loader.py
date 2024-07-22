@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import itertools
 from contextlib import contextmanager
 from typing import TYPE_CHECKING, Any
 
@@ -11,23 +12,55 @@ if TYPE_CHECKING:
     from collections.abc import Iterator
     from os import PathLike
 
+SELECTOR_OPERATORS = ("and", "or", "not")
+
+
+def _remove_empty_keys(some_dict: dict[str, Any]) -> dict[str, Any]:
+    filtered_dict = {}
+    for key, value in some_dict.items():
+        if isinstance(value, list) and len(value) == 0:
+            continue
+        filtered_dict[key] = value
+
+    return filtered_dict
+
+
+def _flatten_lists(some_dict: dict[str, Any]) -> dict[str, Any]:
+    result_dict: dict[str, Any] = {}
+    for key, value in some_dict.items():
+        if isinstance(value, dict):
+            result_dict[key] = _flatten_lists(value)
+        elif isinstance(value, list) and value and isinstance(value[0], list):
+            result_dict[key] = list(itertools.chain(*value))
+        else:
+            result_dict[key] = value
+
+    return result_dict
+
 
 class RecipeLoader(yaml.BaseLoader):
     _namespace: dict[str, Any] | None = None
+    _allow_missing_selector: bool = False
 
     @classmethod
     @contextmanager
-    def with_namespace(cls: type[RecipeLoader], namespace: dict[str, Any] | None) -> Iterator[None]:
+    def with_namespace(
+        cls: type[RecipeLoader],
+        namespace: dict[str, Any] | None,
+        *,
+        allow_missing_selector: bool = False,
+    ) -> Iterator[None]:
         try:
             cls._namespace = namespace
+            cls._allow_missing_selector = allow_missing_selector
             yield
         finally:
             del cls._namespace
 
-    def construct_sequence(  # noqa: C901
+    def construct_sequence(  # noqa: C901, PLR0912
         self,
         node: yaml.ScalarNode | yaml.SequenceNode | yaml.MappingNode,
-        deep: bool = False,  # noqa: FBT002, FBT001
+        deep: bool = False,  # noqa: FBT002, FBT001,
     ) -> list[yaml.ScalarNode]:
         """deep is True when creating an object/mapping recursively,
         in that case want the underlying elements available during construction
@@ -55,6 +88,17 @@ class RecipeLoader(yaml.BaseLoader):
                             _, else_node_value = None, None
 
                         to_be_eval = f"{value_node.value}"
+
+                        if self._allow_missing_selector:
+                            split_selectors = [
+                                selector
+                                for selector in to_be_eval.split()
+                                if selector not in SELECTOR_OPERATORS
+                            ]
+                            for selector in split_selectors:
+                                if self._namespace and selector not in self._namespace:
+                                    cleaned_selector = selector.strip("(").rstrip(")")
+                                    self._namespace[cleaned_selector] = True
 
                         evaled = eval(to_be_eval, self._namespace)  # noqa: S307
                         if evaled:
@@ -84,22 +128,14 @@ def load_yaml(content: str | bytes) -> Any:  # noqa: ANN401
     return yaml.load(content, Loader=yaml.BaseLoader)  # noqa: S506
 
 
-def remove_empty_keys(variant_dict: dict[str, Any]) -> dict[str, Any]:
-    filtered_dict = {}
-    for key, value in variant_dict.items():
-        if isinstance(value, list) and len(value) == 0:
-            continue
-        filtered_dict[key] = value
-
-    return filtered_dict
-
-
 def parse_recipe_config_file(
-    path: PathLike[str], namespace: dict[str, Any] | None
+    path: PathLike[str], namespace: dict[str, Any] | None, *, allow_missing_selector: bool = False
 ) -> dict[str, Any]:
-    with open(path) as f, RecipeLoader.with_namespace(namespace):
+    with open(path) as f, RecipeLoader.with_namespace(
+        namespace, allow_missing_selector=allow_missing_selector
+    ):
         content = yaml.load(f, Loader=RecipeLoader)  # noqa: S506
-    return remove_empty_keys(content)
+    return _flatten_lists(_remove_empty_keys(content))
 
 
 def load_all_requirements(content: dict[str, Any]) -> dict[str, Any]:

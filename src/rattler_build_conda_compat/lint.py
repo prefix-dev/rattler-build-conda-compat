@@ -57,7 +57,6 @@ def lint_recipe_yaml_by_schema(recipe_file):
         meta = yaml.load(fh)
 
     validator = Draft202012Validator(schema)
-
     lints = []
 
     for error in validator.iter_errors(meta):

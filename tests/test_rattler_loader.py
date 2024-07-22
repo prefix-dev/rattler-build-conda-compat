@@ -25,3 +25,15 @@ def test_load_all_requirements() -> None:
 
     content = load_all_requirements(recipe_content)
     print(content)
+
+
+def test_load_recipe_with_missing_selectors(snapshot) -> None:
+    osx_recipe = Path("tests/data/osx_recipe.yaml")
+
+    namespace = {"osx": True, "unix": True}
+
+    loaded_variants = parse_recipe_config_file(
+        str(osx_recipe), namespace, allow_missing_selector=True
+    )
+
+    assert loaded_variants == snapshot

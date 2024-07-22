@@ -1,0 +1,16 @@
+package:
+    name: some-osx-recipe
+    version: 1.0.0
+requirements:
+    build:
+      - if: osx and arm64
+        then:
+          - python
+
+      - if: osx and aarch64
+        then:
+          - ruby
+
+      - if: unix
+        then:
+          - rust
