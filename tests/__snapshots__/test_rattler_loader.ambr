@@ -1,4 +1,19 @@
 # serializer version: 1
+# name: test_load_recipe_with_missing_selectors
+  dict({
+    'package': dict({
+      'name': 'some-osx-recipe',
+      'version': '1.0.0',
+    }),
+    'requirements': dict({
+      'build': list([
+        'python',
+        'ruby',
+        'rust',
+      ]),
+    }),
+  })
+# ---
 # name: test_load_variants
   dict({
     'numpy': list([

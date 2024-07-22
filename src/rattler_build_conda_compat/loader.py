@@ -111,7 +111,9 @@ def remove_empty_keys(variant_dict: dict[str, Any]) -> dict[str, Any]:
 def flatten_lists(variant_dict: dict[str, Any]) -> dict[str, Any]:
     result_dict = {}
     for key, value in variant_dict.items():
-        if isinstance(value, list) and value and isinstance(value[0], list):
+        if isinstance(value, dict):
+            result_dict[key] = flatten_lists(value)
+        elif isinstance(value, list) and value and isinstance(value[0], list):
             result_dict[key] = list(itertools.chain(*value))
         else:
             result_dict[key] = value
@@ -122,7 +124,9 @@ def flatten_lists(variant_dict: dict[str, Any]) -> dict[str, Any]:
 def parse_recipe_config_file(
     path: PathLike[str], namespace: dict[str, Any] | None, *, allow_missing_selector: bool = False
 ) -> dict[str, Any]:
-    with open(path) as f, RecipeLoader.with_namespace(namespace, allow_missing_selector):
+    with open(path) as f, RecipeLoader.with_namespace(
+        namespace, allow_missing_selector=allow_missing_selector
+    ):
         content = yaml.load(f, Loader=RecipeLoader)  # noqa: S506
     return flatten_lists(remove_empty_keys(content))
 
