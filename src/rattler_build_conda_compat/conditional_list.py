@@ -1,8 +1,12 @@
 from __future__ import annotations
 
-from typing import Any, Callable, Generator, Generic, TypeVar, Union
+from typing import TYPE_CHECKING, Any, Generic, List, TypeVar, Union, cast
+
+if TYPE_CHECKING:
+    from collections.abc import Callable, Generator
 
 T = TypeVar("T")
+K = TypeVar("K")
 
 
 class IfStatement(Generic[T]):
@@ -11,11 +15,12 @@ class IfStatement(Generic[T]):
     else_: T | list[T] | None
 
 
-ConditionalList = Union[T, "IfStatement[T]", list[Union[T, "IfStatement[T]"]]]
+ConditionalList = Union[T, IfStatement[T], List[Union[T, IfStatement[T]]]]
 
 
 def visit_conditional_list(  # noqa: C901
-    value: ConditionalList[T], evaluator: Callable[[Any], bool] | None = None
+    value: T | IfStatement[T] | list[T | IfStatement[T]],
+    evaluator: Callable[[Any], bool] | None = None,
 ) -> Generator[T, None, None]:
     """
     A function that yields individual branches of a conditional list.
@@ -30,7 +35,7 @@ def visit_conditional_list(  # noqa: C901
     A generator that yields the individual branches.
     """
 
-    def yield_from_list(value: list[T] | T) -> Generator[T, None, None]:
+    def yield_from_list(value: list[K] | K) -> Generator[K, None, None]:
         if isinstance(value, list):
             yield from value
         else:
@@ -57,8 +62,8 @@ def visit_conditional_list(  # noqa: C901
                         yield from yield_from_list(otherwise)
             else:
                 # In this case its not an if statement
-                yield element
+                yield cast(T, element)
         # If the element is not a dictionary, just yield it
         else:
             # (tim) I get a pyright error here, but I don't know how to fix it
-            yield element
+            yield cast(T, element)

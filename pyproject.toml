@@ -5,11 +5,11 @@ build-backend = "hatchling.build"
 [project]
 name = "rattler-build-conda-compat"
 description = "A package for exposing rattler-build API for conda-smithy"
-version = "0.0.6"
+version = "0.2.2"
 readme = "README.md"
 authors = [{ name = "Nichita Morcotilo", email = "nichita@prefix.dev" }]
 license = { file = "LICENSE.txt" }
-
+dependencies = ["typing-extensions>=4.12,<5"]
 requires-python = ">=3.8"
 
 [tool.ruff]
@@ -30,6 +30,7 @@ ignore = [
     "T201",   # https://docs.astral.sh/ruff/rules/print/
     "A003",   # https://docs.astral.sh/ruff/rules/builtin-attribute-shadowing/
     "PTH",    # We dont want to change the API to pathlib just yet
+    "ANN101", # Deprecated
 ]
 exclude = [
     "src/rattler_build_conda_compat/lint.py",
@@ -42,4 +43,8 @@ exclude = [
 
 [tool.pyright]
 venvPath = ".pixi/envs"
-venv = "default"
+venv = "py312"
+
+[tool.mypy]
+python_version = "3.8"
+allow_redefinition = true

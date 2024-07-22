@@ -1,3 +1,5 @@
+# mypy: ignore-errors
+
 import re
 
 from inspect import cleandoc

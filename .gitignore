@@ -165,5 +165,4 @@ mapping/*# pixi environments
 .pixi
 
 .vscode/
-
 .DS_Store
