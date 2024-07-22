@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import itertools
 from contextlib import contextmanager
 from typing import TYPE_CHECKING, Any, Iterator, Self
 
@@ -10,18 +11,23 @@ from rattler_build_conda_compat.conditional_list import visit_conditional_list
 if TYPE_CHECKING:
     from os import PathLike
 
+SELECTOR_OPERATORS = ("and", "or", "not")
+
 
 class RecipeLoader(yaml.BaseLoader):
     @classmethod
     @contextmanager
-    def with_namespace(cls: Self, namespace: dict[str, Any] | None) -> Iterator[None]:
+    def with_namespace(
+        cls: Self, namespace: dict[str, Any] | None, *, allow_missing_selector: bool = False
+    ) -> Iterator[None]:
         try:
             cls._namespace = namespace
+            cls._allow_missing_selector = allow_missing_selector
             yield
         finally:
             del cls._namespace
 
-    def construct_sequence(  # noqa: C901
+    def construct_sequence(  # noqa: C901, PLR0912
         self: Self,
         node: yaml.Node,
         deep: bool = False,  # noqa: FBT002, FBT001
@@ -52,6 +58,17 @@ class RecipeLoader(yaml.BaseLoader):
                             _, else_node_value = None, None
 
                         to_be_eval = f"{value_node.value}"
+
+                        if self._allow_missing_selector:
+                            split_selectors = [
+                                selector
+                                for selector in to_be_eval.split()
+                                if selector not in SELECTOR_OPERATORS
+                            ]
+                            for selector in split_selectors:
+                                if selector not in self._namespace:
+                                    cleaned_selector = selector.strip("(").rstrip(")")
+                                    self._namespace[cleaned_selector] = True
 
                         evaled = eval(to_be_eval, self._namespace)  # noqa: S307
                         if evaled:
@@ -91,12 +108,23 @@ def remove_empty_keys(variant_dict: dict[str, Any]) -> dict[str, Any]:
     return filtered_dict
 
 
+def flatten_lists(variant_dict: dict[str, Any]) -> dict[str, Any]:
+    result_dict = {}
+    for key, value in variant_dict.items():
+        if isinstance(value, list) and value and isinstance(value[0], list):
+            result_dict[key] = list(itertools.chain(*value))
+        else:
+            result_dict[key] = value
+
+    return result_dict
+
+
 def parse_recipe_config_file(
-    path: PathLike[str], namespace: dict[str, Any] | None
+    path: PathLike[str], namespace: dict[str, Any] | None, *, allow_missing_selector: bool = False
 ) -> dict[str, Any]:
-    with open(path) as f, RecipeLoader.with_namespace(namespace):
+    with open(path) as f, RecipeLoader.with_namespace(namespace, allow_missing_selector):
         content = yaml.load(f, Loader=RecipeLoader)  # noqa: S506
-    return remove_empty_keys(content)
+    return flatten_lists(remove_empty_keys(content))
 
 
 def load_all_requirements(content: dict[str, Any]) -> dict[str, Any]:
