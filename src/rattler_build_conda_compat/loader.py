@@ -1,18 +1,41 @@
 from __future__ import annotations
 
+import itertools
 from contextlib import contextmanager
 from typing import TYPE_CHECKING, Any
 
 import yaml
 
 from rattler_build_conda_compat.conditional_list import visit_conditional_list
-from rattler_build_conda_compat.utils import flatten_lists, remove_empty_keys
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
     from os import PathLike
 
 SELECTOR_OPERATORS = ("and", "or", "not")
+
+
+def _remove_empty_keys(some_dict: dict[str, Any]) -> dict[str, Any]:
+    filtered_dict = {}
+    for key, value in some_dict.items():
+        if isinstance(value, list) and len(value) == 0:
+            continue
+        filtered_dict[key] = value
+
+    return filtered_dict
+
+
+def _flatten_lists(some_dict: dict[str, Any]) -> dict[str, Any]:
+    result_dict: dict[str, Any] = {}
+    for key, value in some_dict.items():
+        if isinstance(value, dict):
+            result_dict[key] = _flatten_lists(value)
+        elif isinstance(value, list) and value and isinstance(value[0], list):
+            result_dict[key] = list(itertools.chain(*value))
+        else:
+            result_dict[key] = value
+
+    return result_dict
 
 
 class RecipeLoader(yaml.BaseLoader):
@@ -112,7 +135,7 @@ def parse_recipe_config_file(
         namespace, allow_missing_selector=allow_missing_selector
     ):
         content = yaml.load(f, Loader=RecipeLoader)  # noqa: S506
-    return flatten_lists(remove_empty_keys(content))
+    return _flatten_lists(_remove_empty_keys(content))
 
 
 def load_all_requirements(content: dict[str, Any]) -> dict[str, Any]:
