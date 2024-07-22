@@ -17,6 +17,7 @@ SELECTOR_OPERATORS = ("and", "or", "not")
 
 class RecipeLoader(yaml.BaseLoader):
     _namespace: dict[str, Any] | None = None
+    _allow_missing_selector: bool = False
 
     @classmethod
     @contextmanager
@@ -72,7 +73,7 @@ class RecipeLoader(yaml.BaseLoader):
                                 if selector not in SELECTOR_OPERATORS
                             ]
                             for selector in split_selectors:
-                                if selector not in self._namespace:
+                                if self._namespace and selector not in self._namespace:
                                     cleaned_selector = selector.strip("(").rstrip(")")
                                     self._namespace[cleaned_selector] = True
 
@@ -115,7 +116,7 @@ def remove_empty_keys(variant_dict: dict[str, Any]) -> dict[str, Any]:
 
 
 def flatten_lists(variant_dict: dict[str, Any]) -> dict[str, Any]:
-    result_dict = {}
+    result_dict: dict[str, Any] = {}
     for key, value in variant_dict.items():
         if isinstance(value, dict):
             result_dict[key] = flatten_lists(value)
