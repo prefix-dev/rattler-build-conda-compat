@@ -1,8 +1,9 @@
 import fnmatch
+import itertools
 from logging import getLogger
 import os
 from pathlib import Path
-from typing import Iterable
+from typing import Any, Dict, Iterable
 
 
 VALID_METAS = ("recipe.yaml",)
@@ -171,3 +172,26 @@ def has_recipe(recipe_dir: Path) -> bool:
         return False
     except OSError:
         return False
+
+
+def remove_empty_keys(some_dict: Dict[str, Any]) -> Dict[str, Any]:
+    filtered_dict = {}
+    for key, value in some_dict.items():
+        if isinstance(value, list) and len(value) == 0:
+            continue
+        filtered_dict[key] = value
+
+    return filtered_dict
+
+
+def flatten_lists(some_dict: Dict[str, Any]) -> Dict[str, Any]:
+    result_dict: Dict[str, Any] = {}
+    for key, value in some_dict.items():
+        if isinstance(value, dict):
+            result_dict[key] = flatten_lists(value)
+        elif isinstance(value, list) and value and isinstance(value[0], list):
+            result_dict[key] = list(itertools.chain(*value))
+        else:
+            result_dict[key] = value
+
+    return result_dict

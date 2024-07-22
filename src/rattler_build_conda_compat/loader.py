@@ -1,12 +1,12 @@
 from __future__ import annotations
 
-import itertools
 from contextlib import contextmanager
 from typing import TYPE_CHECKING, Any
 
 import yaml
 
 from rattler_build_conda_compat.conditional_list import visit_conditional_list
+from rattler_build_conda_compat.utils import flatten_lists, remove_empty_keys
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
@@ -103,29 +103,6 @@ class RecipeLoader(yaml.BaseLoader):
 
 def load_yaml(content: str | bytes) -> Any:  # noqa: ANN401
     return yaml.load(content, Loader=yaml.BaseLoader)  # noqa: S506
-
-
-def remove_empty_keys(variant_dict: dict[str, Any]) -> dict[str, Any]:
-    filtered_dict = {}
-    for key, value in variant_dict.items():
-        if isinstance(value, list) and len(value) == 0:
-            continue
-        filtered_dict[key] = value
-
-    return filtered_dict
-
-
-def flatten_lists(variant_dict: dict[str, Any]) -> dict[str, Any]:
-    result_dict: dict[str, Any] = {}
-    for key, value in variant_dict.items():
-        if isinstance(value, dict):
-            result_dict[key] = flatten_lists(value)
-        elif isinstance(value, list) and value and isinstance(value[0], list):
-            result_dict[key] = list(itertools.chain(*value))
-        else:
-            result_dict[key] = value
-
-    return result_dict
 
 
 def parse_recipe_config_file(
