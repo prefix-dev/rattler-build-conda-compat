@@ -20,8 +20,6 @@ tests:
       recipe:
         - more_tests/*.py
 
-
-  # This test section tries to import the Python modules and errors if it can't
   - if: unix
     then:
       - python:
