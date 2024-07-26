@@ -1,0 +1,30 @@
+package:
+  name: for-test
+  version: 1.0.0
+
+tests:
+  - script:
+      - echo "Hello world"
+      - pytest ./tests
+
+    requirements:
+      run:
+        - pytest
+
+    files:
+      source:
+        - tests/
+        - test.py
+        - "*.sh"
+
+      recipe:
+        - more_tests/*.py
+
+
+  # This test section tries to import the Python modules and errors if it can't
+  - if: unix
+    then:
+      - python:
+          imports:
+            - mypkg
+            - mypkg.subpkg
