@@ -46,3 +46,12 @@ repos:
         entry: pixi run -e lint typos --write-changes --force-exclude
         language: system
         types: [text]
+      - id: release-version-check
+        name: Version check for release branch
+        entry: pixi run python scripts/release_version_check.py
+        language: system
+        # require_serial: true
+        # additional_dependencies: [toml]
+        # always_run: true
+        # pass_filenames: false
+        # stages: [commit]
