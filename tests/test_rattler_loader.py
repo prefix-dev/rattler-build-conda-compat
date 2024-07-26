@@ -5,6 +5,7 @@ from typing import Any
 
 from rattler_build_conda_compat.loader import (
     load_all_requirements,
+    load_all_tests,
     load_yaml,
     parse_recipe_config_file,
 )
@@ -37,3 +38,23 @@ def test_load_recipe_with_missing_selectors(snapshot) -> None:
     )
 
     assert loaded_variants == snapshot
+
+
+def test_load_all_tests(snapshot) -> None:
+    recipe_content = Path("tests/data/recipe_tests.yaml").read_text()
+
+    recipe_content = load_yaml(recipe_content)
+
+    loaded_tests = load_all_tests(recipe_content)
+    assert loaded_tests == snapshot
+
+    # validate that tests section is a list of dictionaries
+    # and also verify that dictionary preserver the right inner dict
+    # let's find script test
+    script_test = next(test for test in loaded_tests if "script" in test)
+    # validate that it has run requirements as dictionary
+    assert script_test["requirements"]["run"][0] == "pytest"
+
+    # let's find python test
+    python_test = next(test for test in loaded_tests if "python" in test)
+    assert "mypkg" in python_test["python"]["imports"]

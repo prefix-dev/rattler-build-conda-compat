@@ -1,0 +1,28 @@
+package:
+  name: for-test
+  version: 1.0.0
+
+tests:
+  - script:
+      - echo "Hello world"
+      - pytest ./tests
+
+    requirements:
+      run:
+        - pytest
+
+    files:
+      source:
+        - tests/
+        - test.py
+        - "*.sh"
+
+      recipe:
+        - more_tests/*.py
+
+  - if: unix
+    then:
+      - python:
+          imports:
+            - mypkg
+            - mypkg.subpkg

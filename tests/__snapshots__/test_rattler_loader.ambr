@@ -1,4 +1,37 @@
 # serializer version: 1
+# name: test_load_all_tests
+  list([
+    dict({
+      'files': dict({
+        'recipe': list([
+          'more_tests/*.py',
+        ]),
+        'source': list([
+          'tests/',
+          'test.py',
+          '*.sh',
+        ]),
+      }),
+      'requirements': dict({
+        'run': list([
+          'pytest',
+        ]),
+      }),
+      'script': list([
+        'echo "Hello world"',
+        'pytest ./tests',
+      ]),
+    }),
+    dict({
+      'python': dict({
+        'imports': list([
+          'mypkg',
+          'mypkg.subpkg',
+        ]),
+      }),
+    }),
+  ])
+# ---
 # name: test_load_recipe_with_missing_selectors
   dict({
     'package': dict({

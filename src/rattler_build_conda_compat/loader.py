@@ -151,3 +151,16 @@ def load_all_requirements(content: dict[str, Any]) -> dict[str, Any]:
         requirements_section[section] = list(visit_conditional_list(section_reqs))
 
     return requirements_section
+
+
+def load_all_tests(content: dict[str, Any]) -> list[dict]:
+    tests_section = content.get("tests", [])
+    if not tests_section:
+        return []
+
+    evaluated_tests = []
+
+    for section in tests_section:
+        evaluated_tests.extend(list(visit_conditional_list(section)))
+
+    return evaluated_tests
