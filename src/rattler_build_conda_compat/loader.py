@@ -3,6 +3,7 @@ from __future__ import annotations
 import itertools
 from contextlib import contextmanager
 from typing import TYPE_CHECKING, Any
+import jinja2
 
 import yaml
 
@@ -164,3 +165,39 @@ def load_all_tests(content: dict[str, Any]) -> list[dict]:
         evaluated_tests.extend(list(visit_conditional_list(section)))
 
     return evaluated_tests
+
+def jinja_env() -> jinja2.Environment:
+    # Create a custom Jinja2 environment with modified syntax
+    return jinja2.Environment(
+        variable_start_string="${{",
+        variable_end_string="}}",
+        trim_blocks=True,
+        lstrip_blocks=True,
+        autoescape=True,
+    )
+
+def render_context(context: dict[str, str]) -> dict[str, str]:
+    env = jinja_env()
+    # Process each key-value pair in the dictionary
+    for key, value in context.items():
+        # If the value is a string, render it as a template
+        if isinstance(value, str):
+            template = env.from_string(value)
+            rendered_value = template.render(context)
+            context[key] = rendered_value
+
+    return context
+
+
+def eval_jinja(content: dict[str, Any]) -> dict[str, Any]:
+    context = content.get("context")
+    # render the context
+    rendered_context = render_context(context)
+
+    # render the rest of the document with the values from the context
+    # and keep undefined expressions _as is_.
+    env = jinja_env()
+    template = env.from_string(yaml.dump(content))
+    rendered_content = template.render(rendered_context)
+
+    return load_yaml(rendered_content)

@@ -36,6 +36,22 @@
     'target_platform': 'linux-64',
   })
 # ---
+# name: test_render_context
+  dict({
+    'build': dict({
+      'string': 'foo-bla',
+    }),
+    'context': dict({
+      'name': 'foo',
+      'name_version': 'foo-bla',
+      'version': 'bla',
+    }),
+    'package': dict({
+      'name': 'foo',
+      'version': 'bla',
+    }),
+  })
+# ---
 # name: test_render_recipe
   list([
     dict({
