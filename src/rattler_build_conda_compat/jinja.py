@@ -52,9 +52,9 @@ def load_recipe_context(context: dict[str, str], jinja_env: jinja2.Environment) 
     return context
 
 
-def eval_recipe_using_context(recipe_content: RecipeWithContext) -> dict[str, Any]:
+def render_recipe_with_context(recipe_content: RecipeWithContext) -> dict[str, Any]:
     """
-    Evaluate the recipe using known values from context section.
+    Render the recipe using known values from context section.
     Unknown values are not evaluated and are kept as it is.
 
     Examples:

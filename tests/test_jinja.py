@@ -1,7 +1,7 @@
 from pathlib import Path
 
 import yaml
-from rattler_build_conda_compat.jinja import eval_recipe_using_context, load_yaml
+from rattler_build_conda_compat.jinja import load_yaml, render_recipe_with_context
 
 
 def test_render_context(snapshot) -> None:
@@ -9,7 +9,7 @@ def test_render_context(snapshot) -> None:
     with recipe.open() as f:
         recipe_yaml = load_yaml(f)
 
-    rendered = eval_recipe_using_context(recipe_yaml)
+    rendered = render_recipe_with_context(recipe_yaml)
     into_yaml = yaml.dump(rendered)
 
     assert into_yaml == snapshot
