@@ -1,0 +1,4 @@
+context:
+  name: "my_value"
+build:
+  string: ${{ name }}-${{ not_present_value }}
