@@ -1,5 +1,5 @@
 # serializer version: 1
-# name: test_render_context
+# name: test_render_recipe_with_context
   '''
   build:
     string: ${{ blas_variant }}${{ hash }}_foo-bla
