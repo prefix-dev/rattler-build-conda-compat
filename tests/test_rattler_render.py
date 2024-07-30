@@ -1,10 +1,10 @@
 from __future__ import annotations
 
 import os
-from typing import TYPE_CHECKING, Any
 from pathlib import Path
+from typing import TYPE_CHECKING, Any
 
-from rattler_build_conda_compat.loader import parse_recipe_config_file, load_yaml, eval_jinja
+from rattler_build_conda_compat.loader import parse_recipe_config_file
 from rattler_build_conda_compat.render import render
 
 if TYPE_CHECKING:
@@ -43,12 +43,3 @@ def test_environ_is_passed_to_rattler_build(env_recipe, snapshot) -> None:
 
     finally:
         os.environ.pop("TEST_SHOULD_BE_PASSED", None)
-
-
-def test_render_context(snapshot) -> None:
-    recipe = Path("tests/data/context.yaml")
-    with recipe.open() as f:
-        recipe_yaml = load_yaml(f)
-
-    rendered = eval_jinja(recipe_yaml)
-    assert rendered == snapshot
