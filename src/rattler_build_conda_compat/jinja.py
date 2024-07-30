@@ -22,6 +22,9 @@ def jinja_env() -> jinja2.Environment:
 
 
 def render_context(context: dict[str, str], jinja_env: jinja2.Environment) -> dict[str, str]:
+    """
+    Render all string values in the context dictionary as Jinja2 templates.
+    """
     # Process each key-value pair in the dictionary
     for key, value in context.items():
         # If the value is a string, render it as a template
@@ -34,6 +37,9 @@ def render_context(context: dict[str, str], jinja_env: jinja2.Environment) -> di
 
 
 def eval_recipe(recipe_content: dict[str, Any]) -> dict[str, Any]:
+    """
+    Evaluate a recipe content using values from context section.
+    """
     env = jinja_env()
     context = recipe_content.get("context", {})
     # render the context
