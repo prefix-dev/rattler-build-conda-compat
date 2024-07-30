@@ -19,6 +19,8 @@ conda = ">=4.2"
 pygithub = ">=2,<3"
 tomli = ">=2.0.1,<3"
 typing-extensions = ">=4.12.2,<4.13"
+jinja2 = ">=3.0.2,<4"
+types-PyYAML = ">=6.0.12.20240311,<6.0.13"
 
 [pypi-dependencies]
 rattler-build-conda-compat = { path = ".", editable = true }
@@ -42,6 +44,11 @@ ruff = ">=0.5.0,<0.6"
 [feature.lint.tasks]
 pre-commit-install = "pre-commit-install"
 pre-commit-run = "pre-commit run"
+
+[feature.type-checking.dependencies]
+mypy = ">=1.10.1,<2"
+
+[feature.type-checking.tasks]
 type-check = "mypy src"
 
 [feature.py312.dependencies]
@@ -66,3 +73,4 @@ py310 = ["py310", "tests"]
 py39 = ["py39", "tests"]
 py38 = ["py38", "tests"]
 lint = { features = ["lint"], no-default-feature = true }
+type-checking = { features = ["type-checking"] }

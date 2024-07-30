@@ -2,7 +2,7 @@
 # name: test_render_context
   dict({
     'build': dict({
-      'string': 'foo-bla',
+      'string': '${{ blas_variant }}${{ hash }}_foo-bla',
     }),
     'context': dict({
       'name': 'foo',

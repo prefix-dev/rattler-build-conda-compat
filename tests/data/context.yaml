@@ -8,4 +8,4 @@ package:
   version: ${{ version }}
 
 build:
-  string: ${{ name_version }}
+  string: ${{ blas_variant }}${{ hash }}_${{ name_version }}
