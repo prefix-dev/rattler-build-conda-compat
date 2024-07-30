@@ -1,17 +1,15 @@
 # serializer version: 1
 # name: test_render_context
-  dict({
-    'build': dict({
-      'string': '${{ blas_variant }}${{ hash }}_foo-bla',
-    }),
-    'context': dict({
-      'name': 'foo',
-      'name_version': 'foo-bla',
-      'version': 'bla',
-    }),
-    'package': dict({
-      'name': 'foo',
-      'version': 'bla',
-    }),
-  })
+  '''
+  build:
+    string: ${{ blas_variant }}${{ hash }}_foo-bla
+  context:
+    name: foo
+    name_version: foo-bla
+    version: bla
+  package:
+    name: foo
+    version: bla
+  
+  '''
 # ---

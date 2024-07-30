@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, TypedDict
 
 import jinja2
 import yaml
@@ -9,7 +9,11 @@ from jinja2 import DebugUndefined
 from rattler_build_conda_compat.loader import load_yaml
 
 
-class MissingUndefined(DebugUndefined):
+class RecipeWithContext(TypedDict, total=False):
+    context: dict[str, str]
+
+
+class _MissingUndefined(DebugUndefined):
     def __str__(self) -> str:
         """
         By default, `DebugUndefined` return values in the form `{{ value }}`.
@@ -29,7 +33,7 @@ def jinja_env() -> jinja2.Environment:
         trim_blocks=True,
         lstrip_blocks=True,
         autoescape=True,
-        undefined=MissingUndefined,
+        undefined=_MissingUndefined,
     )
 
 
@@ -48,21 +52,20 @@ def load_recipe_context(context: dict[str, str], jinja_env: jinja2.Environment) 
     return context
 
 
-def eval_recipe_using_context(recipe_content: dict[str, Any]) -> dict[str, Any]:
+def eval_recipe_using_context(recipe_content: RecipeWithContext) -> dict[str, Any]:
     """
     Evaluate the recipe using known values from context section.
     Unknown values are not evaluated and are kept as it is.
-    Example:
-    ```yaml
-    context:
-      name: "my_value"
-    build:
-       string: ${{ name }}-${{ not_present_value }}
-    ```
-    will be rendered as:
-    ```yaml
-    build:
-       string: my_value-${{ not_present_value }}
+
+    Examples:
+    ---
+    ```python
+    >>> from pathlib import Path
+    >>> from rattler_build_conda_compat.loader import load_yaml
+    >>> recipe_content = load_yaml((Path().resolve() / "tests" / "data" / "eval_recipe_using_context.yaml").read_text())
+    >>> evaluated_context = eval_recipe_using_context(recipe_content)
+    >>> assert "my_value-${{ not_present_value }}" == evaluated_context["build"]["string"]
+    >>>
     ```
     """
     env = jinja_env()

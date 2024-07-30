@@ -30,7 +30,7 @@ pytest = ">=8.2.2,<9"
 syrupy = ">=4.6.1,<5"
 
 [feature.tests.tasks]
-tests = "pytest tests"
+tests = "pytest --doctest-modules"
 snapshot_update = "pytest --snapshot-update tests"
 
 [feature.lint.dependencies]
