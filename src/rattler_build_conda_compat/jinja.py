@@ -63,7 +63,7 @@ def render_recipe_with_context(recipe_content: RecipeWithContext) -> dict[str, A
     >>> from pathlib import Path
     >>> from rattler_build_conda_compat.loader import load_yaml
     >>> recipe_content = load_yaml((Path().resolve() / "tests" / "data" / "eval_recipe_using_context.yaml").read_text())
-    >>> evaluated_context = eval_recipe_using_context(recipe_content)
+    >>> evaluated_context = render_recipe_with_context(recipe_content)
     >>> assert "my_value-${{ not_present_value }}" == evaluated_context["build"]["string"]
     >>>
     ```
