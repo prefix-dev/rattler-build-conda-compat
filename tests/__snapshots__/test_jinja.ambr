@@ -7,7 +7,7 @@
     cuda_version: ${{ hash }}_cuda_12
     name: foo
     name_version: foo-1.2.3
-    splitted_version: 1;2;3
+    split_version: 1;2;3
     version: 1.2.3
   package:
     func_result: c_compiler_stub
