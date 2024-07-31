@@ -2,15 +2,17 @@
 # name: test_render_recipe_with_context
   '''
   build:
-    string: ${{ blas_variant }}${{ hash }}_foo-bla
+    string: ${{ blas_variant }}${{ hash }}_foo-1.2.3
   context:
+    cuda_version: ${{ hash }}_cuda_12
     name: foo
-    name_version: foo-bla
-    version: bla
+    name_version: foo-1.2.3
+    splitted_version: 1;2;3
+    version: 1.2.3
   package:
-    func_result: ${{ compiler }}
+    func_result: c_compiler_stub
     name: foo
-    version: bla
+    version: 1.2.3
   
   '''
 # ---

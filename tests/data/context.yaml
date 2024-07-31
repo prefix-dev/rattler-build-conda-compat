@@ -1,7 +1,9 @@
 context:
   name: "foo"
-  version: "bla"
+  version: "1.2.3"
   name_version: ${{ name }}-${{ version }}
+  cuda_version: ${{ hash }}_cuda_${{ version | version_to_buildstring }}
+  split_version: ${{ version | split('.') | join(';') }}
 
 package:
   name: ${{ name }}

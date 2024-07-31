@@ -22,22 +22,33 @@ class _MissingUndefined(DebugUndefined):
         """
         return f"${super().__str__()}"
 
-    def _fail_with_undefined_error(self, *args, **kwargs) -> None:  # noqa: ARG002, ANN003, ANN002
-        """
-        Override the default behavior of raising an exception when an undefined variable is found or called.
-        Instead, we want to keep the undefined variable as-is and just return it.
-        """
-        return self.__str__()
-
-    def __call__(self, *args, **kwargs):  # noqa: ARG002, ANN003, ANN002, ANN204
-        return self._fail_with_undefined_error()
-
 
 def jinja_env() -> jinja2.Environment:
     """
     Create a `rattler-build` specific Jinja2 environment with modified syntax.
     """
-    return jinja2.Environment(
+
+    def stub_compatible_pin(*args, **kwargs) -> str:  # noqa: ARG001, ANN003, ANN002
+        return f"compatible_pin {args[0]}"
+
+    def stub_subpackage_pin(*args, **kwargs) -> str:  # noqa: ARG001, ANN003, ANN002
+        return f"subpackage_pin {args[0]}"
+
+    def version_to_build_string(some_string: str) -> str:
+        """Converts some version by removing the . character and returning only the first two elements of the version)"""
+        # We first split the string by whitespace and take the first part
+        split = some_string.split()[0] if some_string.split() else some_string
+        # We then split the string by . and take the first two parts
+        parts = split.split(".")
+        major = parts[0] if len(parts) > 0 else ""
+        minor = parts[1] if len(parts) > 1 else ""
+        return f"{major}{minor}"
+
+    def split_filter(s: str, sep: str = " ") -> list[str]:
+        """Filter that split a string by a separator"""
+        return s.split(sep)
+
+    env = jinja2.Environment(
         variable_start_string="${{",
         variable_end_string="}}",
         trim_blocks=True,
@@ -45,6 +56,26 @@ def jinja_env() -> jinja2.Environment:
         autoescape=True,
         undefined=_MissingUndefined,
     )
+
+    # inject rattler-build recipe functions in jinja environment
+    env.globals.update(
+        {
+            "compiler": lambda x: x + "_compiler_stub",
+            "stdlib": lambda x: x + "_stdlib_stub",
+            "pin_subpackage": stub_subpackage_pin,
+            "pin_compatible": stub_compatible_pin,
+            "cdt": lambda *args, **kwargs: "cdt_stub",  # noqa: ARG005
+        }
+    )
+
+    # inject rattler-build recipe filters in jinja environment
+    env.filters.update(
+        {
+            "version_to_buildstring": version_to_build_string,
+            "split": split_filter,
+        }
+    )
+    return env
 
 
 def load_recipe_context(context: dict[str, str], jinja_env: jinja2.Environment) -> dict[str, str]:
