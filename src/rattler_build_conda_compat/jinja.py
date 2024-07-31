@@ -22,6 +22,16 @@ class _MissingUndefined(DebugUndefined):
         """
         return f"${super().__str__()}"
 
+    def _fail_with_undefined_error(self, *args, **kwargs) -> None:  # noqa: ARG002, ANN003, ANN002
+        """
+        Override the default behavior of raising an exception when an undefined variable is found or called.
+        Instead, we want to keep the undefined variable as-is and just return it.
+        """
+        return self.__str__()
+
+    def __call__(self, *args, **kwargs):  # noqa: ARG002, ANN003, ANN002, ANN204
+        return self._fail_with_undefined_error()
+
 
 def jinja_env() -> jinja2.Environment:
     """

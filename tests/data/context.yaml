@@ -6,6 +6,7 @@ context:
 package:
   name: ${{ name }}
   version: ${{ version }}
+  func_result: ${{ compiler('c') }}
 
 build:
   string: ${{ blas_variant }}${{ hash }}_${{ name_version }}
