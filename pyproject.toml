@@ -1,50 +1,72 @@
 [build-system]
-requires = ["hatchling>=1.24"]
 build-backend = "hatchling.build"
+requires = [
+  "hatchling>=1.24",
+]
 
 [project]
 name = "rattler-build-conda-compat"
-description = "A package for exposing rattler-build API for conda-smithy"
 version = "0.2.5"
+
+description = "A package for exposing rattler-build API for conda-smithy"
 readme = "README.md"
-authors = [{ name = "Nichita Morcotilo", email = "nichita@prefix.dev" }]
-license = { file = "LICENSE.txt" }
-dependencies = ["typing-extensions>=4.12,<5"]
+license.file = "LICENSE.txt"
+authors = [
+  { email = "nichita@prefix.dev", name = "Nichita Morcotilo" },
+]
 requires-python = ">=3.8"
+classifiers = [
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+]
+dependencies = [
+  "typing-extensions>=4.12,<5",
+]
 
 [tool.ruff]
-target-version = "py38"
 line-length = 100
+target-version = "py38"
 
 [tool.ruff.format]
-quote-style = "double"
 indent-style = "space"
+quote-style = "double"
 
 [tool.ruff.lint]
-select = ["ALL"]
-ignore = [
-    "E501",   # https://docs.astral.sh/ruff/rules/line-too-long/
-    "D",      # https://docs.astral.sh/ruff/rules/#pydocstyle-d
-    "COM812", # https://docs.astral.sh/ruff/rules/missing-trailing-comma/
-    "ISC001", # https://docs.astral.sh/ruff/rules/single-line-implicit-string-concatenation/
-    "T201",   # https://docs.astral.sh/ruff/rules/print/
-    "A003",   # https://docs.astral.sh/ruff/rules/builtin-attribute-shadowing/
-    "PTH",    # We dont want to change the API to pathlib just yet
-    "ANN101", # Deprecated
-]
 exclude = [
-    "src/rattler_build_conda_compat/lint.py",
-    "src/rattler_build_conda_compat/render.py",
-    "src/rattler_build_conda_compat/utils.py",
+  "src/rattler_build_conda_compat/lint.py",
+  "src/rattler_build_conda_compat/render.py",
+  "src/rattler_build_conda_compat/utils.py",
+]
+ignore = [
+  "A003",
+  "ANN101",
+  "COM812",
+  "D",
+  "E501",
+  "ISC001",
+  "PTH",
+  "T201",
+]
+select = [
+  "ALL",
 ]
 
 [tool.ruff.lint.per-file-ignores]
-"tests/*.py" = ["S101", "INP001", "PLR2004", "ANN001"]
-
-[tool.pyright]
-venvPath = ".pixi/envs"
-venv = "py312"
+"tests/*.py" = [
+  "ANN001",
+  "INP001",
+  "PLR2004",
+  "S101",
+]
 
 [tool.mypy]
-python_version = "3.8"
 allow_redefinition = true
+python_version = "3.8"
+
+[tool.pyright]
+venv = "py312"
+venvPath = ".pixi/envs"

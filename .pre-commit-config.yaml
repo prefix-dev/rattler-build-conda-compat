@@ -46,3 +46,7 @@ repos:
         entry: pixi run -e lint typos --write-changes --force-exclude
         language: system
         types: [text]
+  - repo: https://github.com/tox-dev/pyproject-fmt
+    rev: "2.0.4"
+    hooks:
+      - id: pyproject-fmt
