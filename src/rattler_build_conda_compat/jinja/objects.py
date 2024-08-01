@@ -10,7 +10,7 @@ class _Env:
 
         return f"""${{{{ env.get("{env_var}")}}}}"""
 
-    def exists(self, env_var: str) -> bool:
+    def exists(self, env_var: str) -> str:
         return f"${{{{ env.exists('{env_var}') }}}}"
 
 
