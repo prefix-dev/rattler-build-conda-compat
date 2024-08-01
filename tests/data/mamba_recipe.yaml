@@ -1,0 +1,149 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/prefix-dev/recipe-format/main/schema.json
+
+context:
+  name: mamba
+  libmamba_version: "1.5.8"
+  libmambapy_version: "1.5.8"
+  mamba_version: "1.5.8"
+  release: "2024.03.25"
+  build_number: 2
+
+recipe:
+  name: mamba-split
+
+source:
+  url: https://github.com/mamba-org/mamba/archive/refs/tags/${{ release }}.tar.gz
+  sha256: 6ddaf4b0758eb7ca1250f427bc40c2c3ede43257a60bac54e4320a4de66759a6
+
+build:
+  number: ${{ build_number }}
+
+outputs:
+  - package:
+      name: libmamba
+      version: ${{ libmamba_version }}
+    build:
+      script:
+        - ${{ "build_mamba.sh" if unix }}
+        - ${{ "build_mamba.bat" if win }}
+    requirements:
+      build:
+        - ${{ compiler('cxx') }}
+        - cmake
+        - ninja
+        - ${{ "python" if win }}
+      host:
+        - libsolv >=0.7.23
+        - libcurl >=8.4.0
+        - fmt
+        - ${{ "winreg" if win }}
+      run:
+        - libsolv >=0.7.23
+      run_exports:
+        - ${{ pin_subpackage('libmamba', max_pin='x.x') }}
+      ignore_run_exports:
+        by_name:
+          - spdlog
+          - python
+    tests:
+      - script:
+        - if: unix
+          then:
+            - test -d ${PREFIX}/include/mamba  # [unix]
+          else:
+            - if not exist %LIBRARY_PREFIX%\include\mamba\version.hpp (exit 1)  # [win]
+
+  - package:
+      name: libmambapy
+      version: ${{ libmambapy_version }}
+    build:
+      script:
+        - ${{ "build_mamba.sh" if unix }}
+        - ${{ "build_mamba.bat" if win }}
+      # string: py_sup${{ python | version_to_buildstring }}h${{ hash }}_${{ build_number }}
+    requirements:
+      build:
+        - ${{ compiler('cxx') }}
+        - cmake
+        - ninja
+        - if: build_platform != target_platform
+          then:
+            - python
+            - cross-python_${{ target_platform }}
+            - pybind11
+            - pybind11-abi
+      host:
+        - python
+        - nlohmann_json
+        - ${{ pin_subpackage('libmamba', exact=True) }}
+      run:
+        - python
+        - ${{ pin_subpackage('libmamba', exact=True) }}
+      run_exports:
+        - ${{ pin_subpackage('libmambapy', max_pin='x.x') }}
+      ignore_run_exports:
+        by_name:
+          - spdlog
+    tests:
+      - python:
+          imports:
+            - libmambapy
+            - libmambapy.bindings
+      - script:
+          - python -c "import libmambapy._version; assert libmambapy._version.__version__ == '${{ libmambapy_version }}'"
+
+  - package:
+      name: mamba
+      version: ${{ mamba_version }}
+    build:
+      script:
+        - ${{ "build_mamba.sh" if unix }}
+        - ${{ "build_mamba.bat" if win }}
+      # string: py${{ python | version_to_buildstring }}h${{ hash }}_${{ build_number }}
+      string: ${{ python | version_to_buildstring }}
+      python:
+        entry_points:
+          - mamba = mamba.mamba:main
+    requirements:
+      build:
+        - if: build_platform != target_platform
+          then:
+            - python
+            - cross-python_${{ target_platform }}
+      run:
+        - python
+        - conda >=23.9,<24
+        - ${{ pin_subpackage('libmambapy', exact=True) }}
+
+    tests:
+      - python:
+          imports:
+            - mamba
+      - script:
+        - mamba --help
+        # for some reason tqdm doesn't have a proper colorama dependency so pip check fails
+        # but that's completely unrelated to mamba
+        - python -c "import mamba._version; assert mamba._version.__version__ == '${{ mamba_version }}'"
+
+        - if: linux
+          then:
+            - test -f ${PREFIX}/etc/profile.d/mamba.sh
+            # these tests work when run on win, but for some reason not during conda build
+            - mamba create -n test_py2 python=2.7 --dry-run
+            - mamba install xtensor xsimd -c conda-forge --dry-run
+        - if: unix
+          then:
+            - test -f ${PREFIX}/condabin/mamba
+
+about:
+  homepage: https://github.com/mamba-org/mamba
+  license: BSD-3-Clause
+  license_file: LICENSE
+  license_family: BSD
+  summary: A fast drop-in alternative to conda, using libsolv for dependency resolution
+  description: |
+    # Mamba, the Fast Cross-Platform Package Manager
+    ${{ env.get("MY_ENV_VAR") }}
+    ${{ env.get("MY_ENV_VAR", default="default_value") }}
+
+  repository: https://github.com/mamba-org/mamba

@@ -5,7 +5,7 @@ from rattler_build_conda_compat.jinja import load_yaml, render_recipe_with_conte
 
 
 def test_render_recipe_with_context(snapshot) -> None:
-    recipe = Path("tests/data/context.yaml")
+    recipe = Path("tests/data/mamba_recipe.yaml")
     with recipe.open() as f:
         recipe_yaml = load_yaml(f)
 
