@@ -14,13 +14,8 @@ python = ">=3.8"
 build = ">=0.7.0,<0.8"
 rattler-build = ">=0.18.1,<1"
 conda-build = ">=24.3.0,<25.0"
-"ruamel.yaml" = ">=0.18.6,<0.19"
 conda = ">=4.2"
 pygithub = ">=2,<3"
-tomli = ">=2.0.1,<3"
-typing-extensions = ">=4.12.2,<4.13"
-jinja2 = ">=3.0.2,<4"
-types-PyYAML = ">=6.0.12.20240311,<6.0.13"
 
 [pypi-dependencies]
 rattler-build-conda-compat = { path = ".", editable = true }
