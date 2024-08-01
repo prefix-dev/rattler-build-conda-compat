@@ -8,12 +8,12 @@ import yaml
 from rattler_build_conda_compat.jinja.filters import _bool, _split, _version_to_build_string
 from rattler_build_conda_compat.jinja.objects import (
     _stub_compatible_pin,
-    _Stub_Env,
     _stub_is_linux,
     _stub_is_unix,
     _stub_is_win,
     _stub_match,
     _stub_subpackage_pin,
+    _StubEnv,
 )
 from rattler_build_conda_compat.jinja.utils import _MissingUndefined
 from rattler_build_conda_compat.loader import load_yaml
@@ -37,7 +37,7 @@ def jinja_env() -> jinja2.Environment:
         undefined=_MissingUndefined,
     )
 
-    env_obj = _Stub_Env()
+    env_obj = _StubEnv()
 
     # inject rattler-build recipe functions in jinja environment
     env.globals.update(
