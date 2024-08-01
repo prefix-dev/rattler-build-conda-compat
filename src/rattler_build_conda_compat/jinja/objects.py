@@ -4,7 +4,7 @@ from __future__ import annotations
 class _StubEnv:
     """A class to represent the env object used in rattler-build recipe."""
 
-    def get(self, env_var: str, _default: str | None = None) -> str:
+    def get(self, env_var: str, default: str | None = None) -> str:  # noqa: ARG002
         return f"""env_"{env_var}" """
 
     def exists(self, env_var: str) -> str:
