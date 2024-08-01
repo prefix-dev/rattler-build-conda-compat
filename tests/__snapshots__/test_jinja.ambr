@@ -1,15 +1,145 @@
 # serializer version: 1
 # name: test_render_recipe_with_context
   '''
+  about:
+    description: '# Mamba, the Fast Cross-Platform Package Manager
+  
+      env_"MY_ENV_VAR"
+  
+      env_"MY_ENV_VAR"
+  
+      env_exists_"MY_ENV_VAR"
+  
+      '
+    homepage: https://github.com/mamba-org/mamba
+    license: BSD-3-Clause
+    license_family: BSD
+    license_file: LICENSE
+    repository: https://github.com/mamba-org/mamba
+    summary: A fast drop-in alternative to conda, using libsolv for dependency resolution
   build:
-    string: ${{ blas_variant }}${{ hash }}_foo-bla
+    number: '2'
   context:
-    name: foo
-    name_version: foo-bla
-    version: bla
-  package:
-    name: foo
-    version: bla
+    build_number: '2'
+    libmamba_version: 1.5.8
+    libmambapy_version: 1.5.8
+    mamba_version: 1.5.8
+    name: mamba
+    release: 2024.03.25
+  outputs:
+  - build:
+      script:
+      - build_mamba.sh
+      - ''
+    package:
+      name: libmamba
+      version: 1.5.8
+    requirements:
+      build:
+      - cxx_compiler_stub
+      - cmake
+      - ninja
+      - ''
+      host:
+      - libsolv >=0.7.23
+      - libcurl >=8.4.0
+      - fmt
+      - ''
+      ignore_run_exports:
+        by_name:
+        - spdlog
+        - python
+      run:
+      - libsolv >=0.7.23
+      run_exports:
+      - subpackage_pin libmamba
+    tests:
+    - script:
+      - else:
+        - if not exist %LIBRARY_PREFIX%\include\mamba\version.hpp (exit 1)
+        if: unix
+        then:
+        - test -d ${PREFIX}/include/mamba
+  - build:
+      script:
+      - build_mamba.sh
+      - ''
+    package:
+      name: libmambapy
+      version: 1.5.8
+    requirements:
+      build:
+      - cxx_compiler_stub
+      - cmake
+      - ninja
+      - if: build_platform != target_platform
+        then:
+        - python
+        - cross-python_linux-64
+        - pybind11
+        - pybind11-abi
+      host:
+      - python
+      - nlohmann_json
+      - subpackage_pin libmamba
+      ignore_run_exports:
+        by_name:
+        - spdlog
+      run:
+      - python
+      - subpackage_pin libmamba
+      run_exports:
+      - subpackage_pin libmambapy
+    tests:
+    - python:
+        imports:
+        - libmambapy
+        - libmambapy.bindings
+    - script:
+      - python -c "import libmambapy._version; assert libmambapy._version.__version__
+        == '1.5.8'"
+  - build:
+      python:
+        entry_points:
+        - mamba = mamba.mamba:main
+      script:
+      - build_mamba.sh
+      - ''
+      - ''
+      string: pypython_version_to_build_stringh${{ hash }}_2
+    package:
+      name: mamba
+      version: 1.5.8
+    requirements:
+      build:
+      - if: build_platform != target_platform
+        then:
+        - python
+        - cross-python_linux-64
+      run:
+      - python
+      - conda >=23.9,<24
+      - subpackage_pin libmambapy
+    tests:
+    - python:
+        imports:
+        - mamba
+    - script:
+      - mamba --help
+      - python -c "import mamba._version; assert mamba._version.__version__ == '1.5.8'"
+      - if: linux
+        then:
+        - test -f ${PREFIX}/etc/profile.d/mamba.sh
+        - mamba create -n test_py2 python=2.7 --dry-run
+        - mamba install xtensor xsimd -c conda-forge --dry-run
+      - if: unix
+        then:
+        - test -f ${PREFIX}/condabin/mamba
+  recipe:
+    name: mamba-split
+  source:
+    sha256: 6ddaf4b0758eb7ca1250f427bc40c2c3ede43257a60bac54e4320a4de66759a6
+    url: https://github.com/mamba-org/mamba/archive/refs/tags/2024.03.25.tar.gz
   
   '''
 # ---
