@@ -23,4 +23,4 @@ def test_version_to_build_string() -> None:
     assert _version_to_build_string("1.2") == "12"
     assert _version_to_build_string("nothing") == "nothing"
     some_undefined = _MissingUndefined(name="python")
-    assert _version_to_build_string(some_undefined) == "${{ python | version_to_build_string }}"
+    assert _version_to_build_string(some_undefined) == "python_version_to_build_string"

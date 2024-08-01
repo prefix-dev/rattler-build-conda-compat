@@ -4,11 +4,11 @@
   about:
     description: '# Mamba, the Fast Cross-Platform Package Manager
   
-      ${{ env.get("MY_ENV_VAR")}}
+      env_"MY_ENV_VAR
   
-      ${{ env.get("MY_ENV_VAR", default="default_value") }}
+      env_"MY_ENV_VAR
   
-      ${{ env.exists("MY_ENV_VAR") }}
+      env_exists_"MY_ENV_VAR
   
       '
     homepage: https://github.com/mamba-org/mamba
@@ -106,7 +106,7 @@
       - build_mamba.sh
       - ''
       - ''
-      string: py${{ python | version_to_build_string }}h${{ hash }}_2
+      string: pypython_version_to_build_stringh${{ hash }}_2
     package:
       name: mamba
       version: 1.5.8
