@@ -26,6 +26,7 @@ class RecipeWithContext(TypedDict, total=False):
 def jinja_env() -> jinja2.Environment:
     """
     Create a `rattler-build` specific Jinja2 environment with modified syntax.
+    Target platform, build platform, and mpi are set to linux-64 by default.
     """
 
     env = jinja2.Environment(
@@ -91,6 +92,7 @@ def render_recipe_with_context(recipe_content: RecipeWithContext) -> dict[str, A
     """
     Render the recipe using known values from context section.
     Unknown values are not evaluated and are kept as it is.
+    Target platform, build platform, and mpi are set to linux-64 by default.
 
     Examples:
     ---
