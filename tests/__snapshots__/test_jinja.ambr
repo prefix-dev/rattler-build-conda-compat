@@ -103,7 +103,7 @@
       script:
       - ''
       - ''
-      string: ${{ python | version_to_build_string }}
+      string: py${{ python | version_to_build_string }}h${{ hash }}_2
     package:
       name: mamba
       version: 1.5.8

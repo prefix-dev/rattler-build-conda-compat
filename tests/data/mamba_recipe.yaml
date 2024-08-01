@@ -99,8 +99,7 @@ outputs:
       script:
         - ${{ "build_mamba.sh" if unix }}
         - ${{ "build_mamba.bat" if win }}
-      # string: py${{ python | version_to_buildstring }}h${{ hash }}_${{ build_number }}
-      string: ${{ python | version_to_buildstring }}
+      string: py${{ python | version_to_buildstring }}h${{ hash }}_${{ build_number }}
       python:
         entry_points:
           - mamba = mamba.mamba:main
