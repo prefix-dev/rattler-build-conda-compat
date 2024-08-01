@@ -4,9 +4,9 @@
   about:
     description: '# Mamba, the Fast Cross-Platform Package Manager
   
-      MY_ENV_VAR
+      ${{ env.get(&#34;MY_ENV_VAR&#34;)}}
   
-      default_value
+      ${{ env.get(&#39;MY_ENV_VAR&#39;, default=&#39;default_value&#39;) }}
   
       '
     homepage: https://github.com/mamba-org/mamba

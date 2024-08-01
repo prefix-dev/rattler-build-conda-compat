@@ -1,18 +1,69 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, TypedDict
+from typing import Any, TypedDict
 
-if TYPE_CHECKING:
-    import jinja2
-
+import jinja2
 import yaml
 
-from rattler_build_conda_compat.jinja.objects import jinja_env
+from rattler_build_conda_compat.jinja.filters import _bool, _split, _version_to_build_string
+from rattler_build_conda_compat.jinja.objects import (
+    _Env,
+    _is_linux,
+    _is_unix,
+    _is_win,
+    _stub_compatible_pin,
+    _stub_match,
+    _stub_subpackage_pin,
+)
+from rattler_build_conda_compat.jinja.utils import _MissingUndefined
 from rattler_build_conda_compat.loader import load_yaml
 
 
 class RecipeWithContext(TypedDict, total=False):
     context: dict[str, str]
+
+
+def jinja_env() -> jinja2.Environment:
+    """
+    Create a `rattler-build` specific Jinja2 environment with modified syntax.
+    """
+
+    env = jinja2.Environment(
+        variable_start_string="${{",
+        variable_end_string="}}",
+        trim_blocks=True,
+        lstrip_blocks=True,
+        autoescape=True,
+        undefined=_MissingUndefined,
+    )
+
+    env_obj = _Env()
+
+    # inject rattler-build recipe functions in jinja environment
+    env.globals.update(
+        {
+            "compiler": lambda x: x + "_compiler_stub",
+            "stdlib": lambda x: x + "_stdlib_stub",
+            "pin_subpackage": _stub_subpackage_pin,
+            "pin_compatible": _stub_compatible_pin,
+            "cdt": lambda *args, **kwargs: "cdt_stub",  # noqa: ARG005
+            "env": env_obj,
+            "match": _stub_match,
+            "is_unix": _is_unix,
+            "is_win": _is_win,
+            "is_linux": _is_linux,
+        }
+    )
+
+    # inject rattler-build recipe filters in jinja environment
+    env.filters.update(
+        {
+            "version_to_buildstring": _version_to_build_string,
+            "split": _split,
+            "bool": _bool,
+        }
+    )
+    return env
 
 
 def load_recipe_context(context: dict[str, str], jinja_env: jinja2.Environment) -> dict[str, str]:
