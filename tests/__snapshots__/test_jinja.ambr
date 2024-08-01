@@ -4,9 +4,11 @@
   about:
     description: '# Mamba, the Fast Cross-Platform Package Manager
   
-      ${{ env.get(&#34;MY_ENV_VAR&#34;)}}
+      ${{ env.get("MY_ENV_VAR")}}
   
-      ${{ env.get(&#39;MY_ENV_VAR&#39;, default=&#39;default_value&#39;) }}
+      ${{ env.get("MY_ENV_VAR", default="default_value") }}
+  
+      ${{ env.exists("MY_ENV_VAR") }}
   
       '
     homepage: https://github.com/mamba-org/mamba
@@ -27,7 +29,7 @@
   outputs:
   - build:
       script:
-      - ''
+      - build_mamba.sh
       - ''
     package:
       name: libmamba
@@ -60,7 +62,7 @@
         - test -d ${PREFIX}/include/mamba
   - build:
       script:
-      - ''
+      - build_mamba.sh
       - ''
     package:
       name: libmambapy
@@ -73,7 +75,7 @@
       - if: build_platform != target_platform
         then:
         - python
-        - cross-python_${{ target_platform }}
+        - cross-python_linux-64
         - pybind11
         - pybind11-abi
       host:
@@ -101,6 +103,7 @@
         entry_points:
         - mamba = mamba.mamba:main
       script:
+      - build_mamba.sh
       - ''
       - ''
       string: py${{ python | version_to_build_string }}h${{ hash }}_2
@@ -112,7 +115,7 @@
       - if: build_platform != target_platform
         then:
         - python
-        - cross-python_${{ target_platform }}
+        - cross-python_linux-64
       run:
       - python
       - conda >=23.9,<24

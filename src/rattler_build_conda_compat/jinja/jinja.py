@@ -7,11 +7,11 @@ import yaml
 
 from rattler_build_conda_compat.jinja.filters import _bool, _split, _version_to_build_string
 from rattler_build_conda_compat.jinja.objects import (
-    _Env,
-    _is_linux,
-    _is_unix,
-    _is_win,
     _stub_compatible_pin,
+    _Stub_Env,
+    _stub_is_linux,
+    _stub_is_unix,
+    _stub_is_win,
     _stub_match,
     _stub_subpackage_pin,
 )
@@ -33,11 +33,11 @@ def jinja_env() -> jinja2.Environment:
         variable_end_string="}}",
         trim_blocks=True,
         lstrip_blocks=True,
-        autoescape=True,
+        autoescape=jinja2.select_autoescape(default_for_string=False),
         undefined=_MissingUndefined,
     )
 
-    env_obj = _Env()
+    env_obj = _Stub_Env()
 
     # inject rattler-build recipe functions in jinja environment
     env.globals.update(
@@ -49,9 +49,14 @@ def jinja_env() -> jinja2.Environment:
             "cdt": lambda *args, **kwargs: "cdt_stub",  # noqa: ARG005
             "env": env_obj,
             "match": _stub_match,
-            "is_unix": _is_unix,
-            "is_win": _is_win,
-            "is_linux": _is_linux,
+            "is_unix": _stub_is_unix,
+            "is_win": _stub_is_win,
+            "is_linux": _stub_is_linux,
+            "unix": True,
+            "linux": True,
+            "target_platform": "linux-64",
+            "build_platform": "linux-64",
+            "mpi": "mpi",
         }
     )
 
@@ -69,6 +74,7 @@ def jinja_env() -> jinja2.Environment:
 def load_recipe_context(context: dict[str, str], jinja_env: jinja2.Environment) -> dict[str, str]:
     """
     Load all string values from the context dictionary as Jinja2 templates.
+    Use linux-64 as default target_platform, build_platform, and mpi.
     """
     # Process each key-value pair in the dictionary
     for key, value in context.items():

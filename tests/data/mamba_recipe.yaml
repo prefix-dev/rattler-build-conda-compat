@@ -99,6 +99,7 @@ outputs:
       script:
         - ${{ "build_mamba.sh" if unix }}
         - ${{ "build_mamba.bat" if win }}
+        - ${{ "test_mamba.bat" if target_platform == win }}
       string: py${{ python | version_to_buildstring }}h${{ hash }}_${{ build_number }}
       python:
         entry_points:
@@ -144,5 +145,6 @@ about:
     # Mamba, the Fast Cross-Platform Package Manager
     ${{ env.get("MY_ENV_VAR") }}
     ${{ env.get("MY_ENV_VAR", default="default_value") }}
+    ${{ env.exists("MY_ENV_VAR")}}
 
   repository: https://github.com/mamba-org/mamba
