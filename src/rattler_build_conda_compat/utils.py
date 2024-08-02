@@ -1,8 +1,9 @@
+from __future__ import annotations
 import fnmatch
 from logging import getLogger
 import os
 from pathlib import Path
-from typing import Iterable
+from typing import Any, Iterable, Literal
 
 
 VALID_METAS = ("recipe.yaml",)
@@ -171,3 +172,17 @@ def has_recipe(recipe_dir: Path) -> bool:
         return False
     except OSError:
         return False
+
+
+_Metadata = Literal["name", "version"]
+
+
+def _get_recipe_metadata(meta: dict[str, Any], field: _Metadata) -> str:
+    """
+    Get recipe metadata ( name or version ).
+    It will extract from recipe or package section, depending on the presence of multiple outputs.
+    """
+    if "outputs" in meta:
+        return meta.get("recipe", {}).get(field, "")
+    else:
+        return meta.get("package", {}).get(field, "")

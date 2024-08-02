@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 from rattler_build_conda_compat.loader import parse_recipe_config_file
-from rattler_build_conda_compat.render import render
+from rattler_build_conda_compat.render import MetaData, render
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -43,3 +43,25 @@ def test_environ_is_passed_to_rattler_build(env_recipe, snapshot) -> None:
 
     finally:
         os.environ.pop("TEST_SHOULD_BE_PASSED", None)
+
+
+def test_metadata_for_single_output(feedstock_dir_with_recipe: Path, rich_recipe: Path) -> None:
+    (feedstock_dir_with_recipe / "recipe" / "recipe.yaml").write_text(
+        rich_recipe.read_text(), encoding="utf8"
+    )
+
+    rattler_metadata = MetaData(feedstock_dir_with_recipe)
+
+    assert rattler_metadata.name() == "rich"
+    assert rattler_metadata.version() == "13.4.2"
+
+
+def test_metadata_for_multiple_output(feedstock_dir_with_recipe: Path, mamba_recipe: Path) -> None:
+    (feedstock_dir_with_recipe / "recipe" / "recipe.yaml").write_text(
+        mamba_recipe.read_text(), encoding="utf8"
+    )
+
+    rattler_metadata = MetaData(feedstock_dir_with_recipe)
+
+    assert rattler_metadata.name() == "mamba-split"
+    assert rattler_metadata.version() == "1.5.8"

@@ -1,11 +1,15 @@
 # mypy: ignore-errors
 
+from __future__ import annotations
+
 from collections import OrderedDict
 import json
 import os
+from pathlib import Path
 import subprocess
+import sys
 import tempfile
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 import yaml
 from ruamel.yaml import YAML
 from conda_build.metadata import (
@@ -19,11 +23,12 @@ from conda_build.variants import (
     validate_spec,
     combine_specs,
 )
-from conda_build.metadata import get_selectors
+from conda_build.metadata import get_selectors, check_bad_chrs
 from conda_build.config import Config
 
-from rattler_build_conda_compat.loader import parse_recipe_config_file
-from rattler_build_conda_compat.utils import find_recipe
+from rattler_build_conda_compat.jinja.jinja import render_recipe_with_context
+from rattler_build_conda_compat.loader import load_yaml, parse_recipe_config_file
+from rattler_build_conda_compat.utils import _get_recipe_metadata, find_recipe
 
 
 class MetaData(CondaMetaData):
@@ -59,10 +64,56 @@ class MetaData(CondaMetaData):
 
         self.requirements_path = os.path.join(self.path, "requirements.txt")
 
-    def parse_recipe(self):
-        yaml = YAML()
-        with open(os.path.join(self.path, self._meta_name), "r") as recipe_yaml:
-            return yaml.load(recipe_yaml)
+    def parse_recipe(self) -> dict[str, Any]:
+        recipe_path: Path = Path(self.path) / self._meta_name
+
+        yaml_content = load_yaml(recipe_path.read_text())
+
+        return render_recipe_with_context(yaml_content)
+
+    def name(self) -> str:
+        """
+        Overrides the conda_build.metadata.MetaData.name method.
+        Returns the name of the package.
+        If recipe has multiple outputs, it will return the name of the `recipe` field.
+        Otherwise it will return the name of the `package` field.
+
+        Raises:
+            - CondaBuildUserError: If the `name` contains bad characters.
+            - ValueError: If the name is not lowercase or missing.
+
+        """
+        name = _get_recipe_metadata(self.meta, "name")
+
+        if not name:
+            raise ValueError(f"Error: package/name missing in: {self.meta_path!r}")
+
+        if name != name.lower():
+            raise ValueError(f"Error: package/name must be lowercase, got: {name!r}")
+
+        check_bad_chrs(name, "package/name")
+        return name
+
+    def version(self) -> str:
+        """
+        Overrides the conda_build.metadata.MetaData.version method.
+        Returns the version of the package.
+        If recipe has multiple outputs, it will return the version of the `recipe` field.
+        Otherwise it will return the version of the `package` field.
+
+        Raises:
+            - CondaBuildUserError: If the `version` contains bad characters.
+            - ValueError: If the version starts with a period or version is missing.
+        """
+        version = _get_recipe_metadata(self.meta, "version")
+
+        if not version:
+            raise ValueError(f"Error: package/version missing in: {self.meta_path!r}")
+
+        check_bad_chrs(version, "package/version")
+        if version.startswith("."):
+            raise ValueError(f"Fully-rendered version can't start with period -  got {version!r}")
+        return version
 
     def render_recipes(self, variants) -> List[Dict]:
         platform_and_arch = f"{self.config.platform}-{self.config.arch}"

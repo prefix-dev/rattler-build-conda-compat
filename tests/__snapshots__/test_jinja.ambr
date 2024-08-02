@@ -137,6 +137,7 @@
         - test -f ${PREFIX}/condabin/mamba
   recipe:
     name: mamba-split
+    version: 1.5.8
   source:
     sha256: 6ddaf4b0758eb7ca1250f427bc40c2c3ede43257a60bac54e4320a4de66759a6
     url: https://github.com/mamba-org/mamba/archive/refs/tags/2024.03.25.tar.gz
