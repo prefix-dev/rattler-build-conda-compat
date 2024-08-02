@@ -112,7 +112,7 @@ class MetaData(CondaMetaData):
 
         check_bad_chrs(version, "package/version")
         if version.startswith("."):
-            raise ValueError("Fully-rendered version can't start with period -  got %s", version)
+            raise ValueError(f"Fully-rendered version can't start with period -  got {version!r}")
         return version
 
     def render_recipes(self, variants) -> List[Dict]:
