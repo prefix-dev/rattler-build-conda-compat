@@ -1,32 +1,32 @@
 # serializer version: 1
 # name: test_environ_is_passed_to_rattler_build
   list([
-    CommentedMap({
-      'package': CommentedMap({
-        'name': 'py-test',
-        'version': '1.0.0',
+    dict({
+      'about': dict({
       }),
-      'build': CommentedMap({
-        'skip': CommentedSeq([
+      'build': dict({
+        'skip': list([
           "env.get('TEST_SHOULD_BE_PASSED') == 'false'",
         ]),
       }),
-      'requirements': CommentedMap({
-        'build': CommentedSeq([
-          "${{ compiler('c') }}",
-          "${{ compiler('cuda') }}",
-        ]),
-        'host': CommentedSeq([
-          'python',
-        ]),
-        'run': CommentedSeq([
-          'python',
-        ]),
-      }),
-      'about': dict({
-      }),
       'extra': dict({
         'final': True,
+      }),
+      'package': dict({
+        'name': 'py-test',
+        'version': '1.0.0',
+      }),
+      'requirements': dict({
+        'build': list([
+          'c_compiler_stub',
+          'cuda_compiler_stub',
+        ]),
+        'host': list([
+          'python',
+        ]),
+        'run': list([
+          'python',
+        ]),
       }),
     }),
   ])

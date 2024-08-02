@@ -60,3 +60,25 @@ def old_recipe_dir(tmpdir: Path) -> Path:
     meta.touch()
 
     return recipe_dir
+
+
+@pytest.fixture()
+def mamba_recipe() -> Path:
+    return Path("tests/data/mamba_recipe.yaml")
+
+
+@pytest.fixture()
+def rich_recipe() -> Path:
+    return Path("tests/data/rich_recipe.yaml")
+
+
+@pytest.fixture()
+def feedstock_dir_with_recipe(tmpdir: Path) -> Path:
+    feedstock_dir = tmpdir / "feedstock"
+
+    feedstock_dir.mkdir()
+
+    recipe_dir = feedstock_dir / "recipe"
+    recipe_dir.mkdir()
+
+    return feedstock_dir
