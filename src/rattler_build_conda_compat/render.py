@@ -83,7 +83,7 @@ class MetaData(CondaMetaData):
             - ValueError: If the name is not lowercase or missing.
 
         """
-        name = _get_recipe_metadata(self.meta, "name")
+        name = _get_recipe_metadata(self.meta, "name", rendered=self._rendered)
 
         if not name:
             raise ValueError(f"Error: package/name missing in: {self.meta_path!r}")
@@ -105,7 +105,7 @@ class MetaData(CondaMetaData):
             - CondaBuildUserError: If the `version` contains bad characters.
             - ValueError: If the version starts with a period or version is missing.
         """
-        version = _get_recipe_metadata(self.meta, "version")
+        version = _get_recipe_metadata(self.meta, "version", rendered=self._rendered)
 
         if not version:
             raise ValueError(f"Error: package/version missing in: {self.meta_path!r}")
@@ -255,9 +255,9 @@ def render_recipe(
 
 
 def render(
-    recipe_path,
-    config=None,
-    variants=None,
+    recipe_path: os.PathLike,
+    config: Optional[Config] = None,
+    variants: Optional[Dict[str, Any] | None] = None,
     **kwargs,
 ):
     """Given path to a recipe, return the MetaData object(s) representing that recipe, with jinja2

@@ -177,11 +177,15 @@ def has_recipe(recipe_dir: Path) -> bool:
 _Metadata = Literal["name", "version"]
 
 
-def _get_recipe_metadata(meta: dict[str, Any], field: _Metadata) -> str:
+def _get_recipe_metadata(meta: dict[str, Any], field: _Metadata, rendered: bool = False) -> str:
     """
-    Get recipe metadata ( name or version ).
+    Get recipe metadata ( name or version )
     It will extract from recipe or package section, depending on the presence of multiple outputs.
+    If recipe was rendered by rattler-build, they are always present under recipe.package field.
     """
+    if rendered:
+        return meta.get("recipe", {}).get("package", {}).get(field, "")
+
     if "outputs" in meta:
         return meta.get("recipe", {}).get(field, "")
     else:
