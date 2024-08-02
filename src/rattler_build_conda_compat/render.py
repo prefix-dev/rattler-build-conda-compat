@@ -80,15 +80,16 @@ class MetaData(CondaMetaData):
 
         Raises:
             - CondaBuildUserError: If the `name` contains bad characters.
+            - ValueError: If the name is not lowercase or missing.
 
         """
         name = _get_recipe_metadata(self.meta, "name")
 
         if not name:
-            sys.exit(f"Error: package/name missing in: {self.meta_path!r}")
+            raise ValueError(f"Error: package/name missing in: {self.meta_path!r}")
 
         if name != name.lower():
-            sys.exit(f"Error: package/name must be lowercase, got: {name!r}")
+            raise ValueError(f"Error: package/name must be lowercase, got: {name!r}")
 
         check_bad_chrs(name, "package/name")
         return name
@@ -102,12 +103,12 @@ class MetaData(CondaMetaData):
 
         Raises:
             - CondaBuildUserError: If the `version` contains bad characters.
-            - ValueError: If the version starts with a period.
+            - ValueError: If the version starts with a period or version is missing.
         """
         version = _get_recipe_metadata(self.meta, "version")
 
         if not version:
-            sys.exit(f"Error: package/version missing in: {self.meta_path!r}")
+            raise ValueError(f"Error: package/version missing in: {self.meta_path!r}")
 
         check_bad_chrs(version, "package/version")
         if version.startswith("."):
