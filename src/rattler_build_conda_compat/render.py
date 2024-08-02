@@ -73,6 +73,7 @@ class MetaData(CondaMetaData):
 
     def name(self) -> str:
         """
+        Overrides the conda_build.metadata.MetaData.name method.
         Returns the name of the package.
         If recipe has multiple outputs, it will return the name of the `recipe` field.
         Otherwise it will return the name of the `package` field.
@@ -94,6 +95,7 @@ class MetaData(CondaMetaData):
 
     def version(self) -> str:
         """
+        Overrides the conda_build.metadata.MetaData.version method.
         Returns the version of the package.
         If recipe has multiple outputs, it will return the version of the `recipe` field.
         Otherwise it will return the version of the `package` field.
