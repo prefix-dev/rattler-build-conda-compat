@@ -65,3 +65,27 @@ def test_metadata_for_multiple_output(feedstock_dir_with_recipe: Path, mamba_rec
 
     assert rattler_metadata.name() == "mamba-split"
     assert rattler_metadata.version() == "1.5.8"
+
+
+def test_metadata_when_rendering_single_output(
+    feedstock_dir_with_recipe: Path, rich_recipe: Path
+) -> None:
+    recipe_path = feedstock_dir_with_recipe / "recipe" / "recipe.yaml"
+    (recipe_path).write_text(rich_recipe.read_text(), encoding="utf8")
+
+    rendered = render(str(recipe_path), platform="linux", arch="64")
+
+    assert rendered[0][0].name() == "rich"
+    assert rendered[0][0].version() == "13.4.2"
+
+
+def test_metadata_when_rendering_multiple_output(
+    feedstock_dir_with_recipe: Path, multiple_outputs: Path
+) -> None:
+    recipe_path = feedstock_dir_with_recipe / "recipe" / "recipe.yaml"
+    (recipe_path).write_text(multiple_outputs.read_text(), encoding="utf8")
+
+    rendered = render(str(recipe_path), platform="linux", arch="64")
+
+    assert rendered[0][0].name() == "libmamba"
+    assert rendered[0][0].version() == "1.5.8"

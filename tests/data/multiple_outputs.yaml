@@ -81,17 +81,10 @@ outputs:
         - python
         - ${{ pin_subpackage('libmamba', exact=True) }}
       run_exports:
-        - ${{ pin_subpackage('libmambapy', max_pin='x.x') }}
+        - ${{ pin_subpackage('libmambapy', upper_bound='x.x') }}
       ignore_run_exports:
         by_name:
           - spdlog
-    tests:
-      - python:
-          imports:
-            - libmambapy
-            - libmambapy.bindings
-      - script:
-          - python -c "import libmambapy._version; assert libmambapy._version.__version__ == '${{ libmambapy_version }}'"
 
   - package:
       name: mamba
@@ -116,25 +109,6 @@ outputs:
         - conda >=23.9,<24
         - ${{ pin_subpackage('libmambapy', exact=True) }}
 
-    tests:
-      - python:
-          imports:
-            - mamba
-      - script:
-        - mamba --help
-        # for some reason tqdm doesn't have a proper colorama dependency so pip check fails
-        # but that's completely unrelated to mamba
-        - python -c "import mamba._version; assert mamba._version.__version__ == '${{ mamba_version }}'"
-
-        - if: linux
-          then:
-            - test -f ${PREFIX}/etc/profile.d/mamba.sh
-            # these tests work when run on win, but for some reason not during conda build
-            - mamba create -n test_py2 python=2.7 --dry-run
-            - mamba install xtensor xsimd -c conda-forge --dry-run
-        - if: unix
-          then:
-            - test -f ${PREFIX}/condabin/mamba
 
 about:
   homepage: https://github.com/mamba-org/mamba
@@ -142,10 +116,6 @@ about:
   license_file: LICENSE
   license_family: BSD
   summary: A fast drop-in alternative to conda, using libsolv for dependency resolution
-  description: |
-    # Mamba, the Fast Cross-Platform Package Manager
-    ${{ env.get("MY_ENV_VAR") }}
-    ${{ env.get("MY_ENV_VAR", default="default_value") }}
-    ${{ env.exists("MY_ENV_VAR")}}
+  description: Mamba, the Fast Cross-Platform Package Manager
 
   repository: https://github.com/mamba-org/mamba
