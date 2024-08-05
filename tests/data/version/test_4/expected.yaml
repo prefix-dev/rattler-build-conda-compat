@@ -9,6 +9,6 @@ package:
 
 source:
   url:
-    - ${{ cran_mirror }}/src/contrib/systemfit_{{ version }}.tar.gz
-    - ${{ cran_mirror }}/src/contrib/Archive/systemfit/systemfit_{{ version }}.tar.gz
+  - ${{ cran_mirror }}/src/contrib/systemfit_${{ version }}.tar.gz
+  - ${{ cran_mirror }}/src/contrib/Archive/systemfit/systemfit_${{ version }}.tar.gz
   sha256: 5994fbb81f1678325862414f58328cdc2c46d47efa1f23218e9416a4da431ce2

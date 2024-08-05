@@ -1,21 +1,27 @@
 from __future__ import annotations
 
+import copy
 import hashlib
 import io
 import re
+import logging
 from typing import TYPE_CHECKING, Any, Literal
 
 import requests
 from ruamel.yaml import YAML
 
 from rattler_build_conda_compat.jinja.jinja import jinja_env, load_recipe_context
-from rattler_build_conda_compat.recipe_sources import get_all_sources, Source
+from rattler_build_conda_compat.recipe_sources import Source, get_all_sources
 
 if TYPE_CHECKING:
     from pathlib import Path
 
+logger = logging.getLogger(__name__)
+
 yaml = YAML()
 yaml.preserve_quotes = True
+yaml.width = 4096
+yaml.indent(mapping=2, sequence=2, offset=0)
 
 
 def _update_build_number_in_context(recipe: dict[str, Any], new_build_number: int) -> bool:
@@ -109,6 +115,7 @@ def update_hash(source: Source, url: str, hash_: Hash | None) -> None:
     else:
         # download and hash the file
         hasher = hashlib.sha256()
+        logger.info("Retrieving and hashing %s", url)
         with requests.get(url, stream=True, timeout=100) as r:
             for chunk in r.iter_content(chunk_size=4096):
                 hasher.update(chunk)
@@ -142,8 +149,10 @@ def update_version(file: Path, new_version: str, hash_: Hash | None) -> str:
 
     # set up the jinja context
     env = jinja_env()
-    context = data.get("context", {})
+    context = copy.deepcopy(data.get("context", {}))
     context_variables = load_recipe_context(context, env)
+    # for r-recipes we add the default `cran_mirror` variable
+    context_variables["cran_mirror"] = "https://cran.r-project.org"
 
     for source in get_all_sources(data):
         # render the whole URL and find the hash
