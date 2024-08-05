@@ -60,7 +60,7 @@ def get_all_sources(recipe: Mapping[Any, Any]) -> Iterator[Source]:
             yield source
 
 
-def get_all_url_sources(recipe: Mapping[Any, Any]) -> Iterator[str | list[str]]:
+def get_all_url_sources(recipe: Mapping[Any, Any]) -> Iterator[str]:
     """
     Get all url sources from the recipe. This can be from a list of sources,
     a single source, or conditional and its branches.
