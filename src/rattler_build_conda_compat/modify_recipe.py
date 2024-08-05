@@ -89,7 +89,7 @@ class Hash:
         return f"{self.hash_type}: {self.hash_value}"
 
 
-def has_jinja_version(url: str) -> bool:
+def _has_jinja_version(url: str) -> bool:
     """Check if the URL has a jinja `${{ version }}` in it."""
     pattern = r"\${{\s*version"
     return re.search(pattern, url) is not None
@@ -159,11 +159,14 @@ def update_version(file: Path, new_version: str, hash_: Hash | None) -> str:
         if "url" not in source:
             continue
 
-        urls = source["url"]
-        if not isinstance(urls, list):
-            urls = [urls]
+        url = source["url"]
+        if isinstance(url, list):
+            url = url[0]
 
-        template = env.from_string(urls[0])
+        if not _has_jinja_version(url):
+            continue
+
+        template = env.from_string(url)
         rendered_url = template.render(context_variables)
 
         update_hash(source, rendered_url, hash_)
