@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 yaml = YAML()
 yaml.preserve_quotes = True
 yaml.width = 4096
-yaml.indent(mapping=2, sequence=2, offset=0)
+yaml.indent(mapping=2, sequence=4, offset=2)
 
 
 def _update_build_number_in_context(recipe: dict[str, Any], new_build_number: int) -> bool:
