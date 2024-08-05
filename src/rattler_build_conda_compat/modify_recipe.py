@@ -3,8 +3,8 @@ from __future__ import annotations
 import copy
 import hashlib
 import io
-import re
 import logging
+import re
 from typing import TYPE_CHECKING, Any, Literal
 
 import requests
