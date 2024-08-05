@@ -1,4 +1,18 @@
 # serializer version: 1
+# name: test_context_rendering
+  '''
+  build:
+    string: ${{ blas_variant }}${{ hash }}_foo-bla
+  context:
+    name: foo
+    name_version: foo-bla
+    version: bla
+  package:
+    name: foo
+    version: bla
+  
+  '''
+# ---
 # name: test_render_recipe_with_context
   '''
   about:

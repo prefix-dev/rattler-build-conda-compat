@@ -24,3 +24,14 @@ def test_version_to_build_string() -> None:
     assert _version_to_build_string("nothing") == "nothing"
     some_undefined = _MissingUndefined(name="python")
     assert _version_to_build_string(some_undefined) == "python_version_to_build_string"
+
+
+def test_context_rendering(snapshot) -> None:
+    recipe = Path("tests/data/context.yaml")
+    with recipe.open() as f:
+        recipe_yaml = load_yaml(f)
+
+    rendered = render_recipe_with_context(recipe_yaml)
+    into_yaml = yaml.dump(rendered)
+
+    assert into_yaml == snapshot

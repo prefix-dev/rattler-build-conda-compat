@@ -1,0 +1,11 @@
+context:
+  name: "foo"
+  version: "bla"
+  name_version: ${{ name }}-${{ version }}
+
+package:
+  name: ${{ name }}
+  version: ${{ version }}
+
+build:
+  string: ${{ blas_variant }}${{ hash }}_${{ name_version }}
