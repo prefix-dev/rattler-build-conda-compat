@@ -3,10 +3,13 @@ from __future__ import annotations
 import hashlib
 import io
 import re
-from typing import TYPE_CHECKING, Any, Generator
+from typing import TYPE_CHECKING, Any, Literal
 
 import requests
 from ruamel.yaml import YAML
+
+from rattler_build_conda_compat.jinja.jinja import jinja_env, load_recipe_context
+from rattler_build_conda_compat.recipe_sources import get_all_sources, Source
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -38,14 +41,24 @@ def _update_build_number_in_recipe(recipe: dict[str, Any], new_build_number: int
     return is_modified
 
 
-def update_build_number(file: Path, new_build_number: int) -> str:
-    # This function should be called to update the build number of the recipe
-    # in the meta.yaml file.
+def update_build_number(file: Path, new_build_number: int = 0) -> str:
+    """
+    Update the build number in the recipe file.
+
+    Arguments:
+    ----------
+    * `file` - The path to the recipe file.
+    * `new_build_number` - The new build number to use. (default: 0)
+
+    Returns:
+    --------
+    The updated recipe as a string.
+    """
     with file.open("r") as f:
         data = yaml.load(f)
     build_number_modified = _update_build_number_in_context(data, new_build_number)
     if not build_number_modified:
-        build_number_modified = _update_build_number_in_recipe(data, new_build_number)
+        _update_build_number_in_recipe(data, new_build_number)
 
     with io.StringIO() as f:
         yaml.dump(data, f)
@@ -62,7 +75,7 @@ class CouldNotUpdateVersionError(Exception):
 
 
 class Hash:
-    def __init__(self, hash_type: str, hash_value: str) -> None:
+    def __init__(self, hash_type: Literal["md5", "sha256"], hash_value: str) -> None:
         self.hash_type = hash_type
         self.hash_value = hash_value
 
@@ -76,29 +89,23 @@ def has_jinja_version(url: str) -> bool:
     return re.search(pattern, url) is not None
 
 
-def flatten_all_sources(sources: list[dict[str, Any]]) -> Generator[dict[str, Any], None, None]:
+def update_hash(source: Source, url: str, hash_: Hash | None) -> None:
     """
-    Flatten all sources in a recipe. This is useful when a source is defined
-    with an if/else statement. Will yield both branches of the if/else
-    statement if it exists.
+    Update the sha256 hash in the source dictionary.
+
+    Arguments:
+    ----------
+    * `source` - The source dictionary to update.
+    * `url` - The URL to download and hash (if no hash is provided).
+    * `hash_` - The hash to use. If not provided, the file will be downloaded and `sha256` hashed.
     """
-    for source in sources:
-        if "if" in source:
-            yield source["then"]
-            if "else" in source:
-                yield source["else"]
-        else:
-            yield source
+    if "md5" in source:
+        del source["md5"]
+    if "sha256" in source:
+        del source["sha256"]
 
-
-def update_hash(source: dict[str, Any], url: str, hash_type: Hash | None) -> None:
-    # kick out any hash that is not the one we are updating
-    potential_hashes = {"sha256", "md5"}
-    for key in potential_hashes:
-        if key in source:
-            del source[key]
-    if hash_type is not None:
-        source[hash_type.hash_type] = hash_type.hash_value
+    if hash_ is not None:
+        source[hash_.hash_type] = hash_.hash_value
     else:
         # download and hash the file
         hasher = hashlib.sha256()
@@ -108,9 +115,20 @@ def update_hash(source: dict[str, Any], url: str, hash_type: Hash | None) -> Non
         source["sha256"] = hasher.hexdigest()
 
 
-def update_version(file: Path, new_version: str, hash_type: Hash | None) -> str:
-    # This function should be called to update the version of the recipe
-    # in the meta.yaml file.
+def update_version(file: Path, new_version: str, hash_: Hash | None) -> str:
+    """
+    Update the version in the recipe file.
+
+    Arguments:
+    ----------
+    * `file` - The path to the recipe file.
+    * `new_version` - The new version to use.
+    * `hash_type` - The hash type to use. If not provided, the file will be downloaded and `sha256` hashed.
+
+    Returns:
+    --------
+    The updated recipe as a string.
+    """
 
     with file.open("r") as f:
         data = yaml.load(f)
@@ -122,20 +140,24 @@ def update_version(file: Path, new_version: str, hash_type: Hash | None) -> str:
 
     data["context"]["version"] = new_version
 
-    sources = data.get("source", [])
-    if isinstance(sources, dict):
-        sources = [sources]
+    # set up the jinja context
+    env = jinja_env()
+    context = data.get("context", {})
+    context_variables = load_recipe_context(context, env)
 
-    for source in flatten_all_sources(sources):
-        if has_jinja_version(source.get("url", "")):
-            # render the whole URL and find the hash
-            urls = source["url"]
-            if not isinstance(urls, list):
-                urls = [urls]
+    for source in get_all_sources(data):
+        # render the whole URL and find the hash
+        if "url" not in source:
+            continue
 
-            rendered_url = urls[0].replace("${{ version }}", new_version)
+        urls = source["url"]
+        if not isinstance(urls, list):
+            urls = [urls]
 
-            update_hash(source, rendered_url, hash_type)
+        template = env.from_string(urls[0])
+        rendered_url = template.render(context_variables)
+
+        update_hash(source, rendered_url, hash_)
 
     with io.StringIO() as f:
         yaml.dump(data, f)
