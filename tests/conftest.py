@@ -8,6 +8,11 @@ import pytest
 
 
 @pytest.fixture()
+def data_dir() -> Path:
+    return Path(__file__).parent / "data"
+
+
+@pytest.fixture()
 def python_recipe(tmpdir: Path) -> str:
     recipe_dir = tmpdir / "recipe"
     mkdir(recipe_dir)

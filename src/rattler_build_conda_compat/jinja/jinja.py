@@ -107,11 +107,11 @@ def render_recipe_with_context(recipe_content: RecipeWithContext) -> dict[str, A
     """
     env = jinja_env()
     context = recipe_content.get("context", {})
-    # load all context templates
-    context_templates = load_recipe_context(context, env)
+    # render out the context section and retrieve dictionary
+    context_variables = load_recipe_context(context, env)
 
     # render the rest of the document with the values from the context
     # and keep undefined expressions _as is_.
     template = env.from_string(yaml.dump(recipe_content))
-    rendered_content = template.render(context_templates)
+    rendered_content = template.render(context_variables)
     return load_yaml(rendered_content)
