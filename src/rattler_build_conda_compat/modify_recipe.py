@@ -91,6 +91,23 @@ def flatten_all_sources(sources: list[dict[str, Any]]) -> Generator[dict[str, An
             yield source
 
 
+def update_hash(source: dict[str, Any], url: str, hash_type: Hash | None) -> None:
+    # kick out any hash that is not the one we are updating
+    potential_hashes = {"sha256", "md5"}
+    for key in potential_hashes:
+        if key in source:
+            del source[key]
+    if hash_type is not None:
+        source[hash_type.hash_type] = hash_type.hash_value
+    else:
+        # download and hash the file
+        hasher = hashlib.sha256()
+        with requests.get(url, stream=True, timeout=100) as r:
+            for chunk in r.iter_content(chunk_size=4096):
+                hasher.update(chunk)
+        source["sha256"] = hasher.hexdigest()
+
+
 def update_version(file: Path, new_version: str, hash_type: Hash | None) -> str:
     # This function should be called to update the version of the recipe
     # in the meta.yaml file.
@@ -111,27 +128,14 @@ def update_version(file: Path, new_version: str, hash_type: Hash | None) -> str:
 
     for source in flatten_all_sources(sources):
         if has_jinja_version(source.get("url", "")):
-            # kick out any hash that is not the one we are updating
-            potential_hashes = {"sha256", "md5"}
-            for key in potential_hashes:
-                if key in source:
-                    del source[key]
-            if hash_type is not None:
-                source[hash_type.hash_type] = hash_type.hash_value
-            else:
-                # render the whole URL and find the hash
-                urls = source["url"]
-                if not isinstance(urls, list):
-                    urls = [urls]
+            # render the whole URL and find the hash
+            urls = source["url"]
+            if not isinstance(urls, list):
+                urls = [urls]
 
-                # TODO(wolfv): render properly with jinja here
-                rendered = urls[0].replace("${{ version }}", new_version)
-                # download and hash the file
-                hasher = hashlib.sha256()
-                with requests.get(rendered, stream=True, timeout=100) as r:
-                    for chunk in r.iter_content(chunk_size=4096):
-                        hasher.update(chunk)
-                source["sha256"] = hasher.hexdigest()
+            rendered_url = urls[0].replace("${{ version }}", new_version)
+
+            update_hash(source, rendered_url, hash_type)
 
     with io.StringIO() as f:
         yaml.dump(data, f)
