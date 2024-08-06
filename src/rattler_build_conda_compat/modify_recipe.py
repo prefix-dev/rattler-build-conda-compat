@@ -105,17 +105,19 @@ def update_hash(source: Source, url: str, hash_: Hash | None) -> None:
     * `url` - The URL to download and hash (if no hash is provided).
     * `hash_` - The hash to use. If not provided, the file will be downloaded and `sha256` hashed.
     """
-    if "md5" in source:
-        del source["md5"]
-    if "sha256" in source:
-        del source["sha256"]
+    hash_type = hash_.hash_type if hash_ is not None else "sha256"
+    # delete all old hashes that we are not updating
+    all_hash_types = {"md5", "sha256"}
+    for key in all_hash_types - {hash_type}:
+        if key in source:
+            del source[key]
 
     if hash_ is not None:
         source[hash_.hash_type] = hash_.hash_value
     else:
         # download and hash the file
         hasher = hashlib.sha256()
-        logger.info("Retrieving and hashing %s", url)
+        print(f"Retrieving and hashing {url}")
         with requests.get(url, stream=True, timeout=100) as r:
             for chunk in r.iter_content(chunk_size=4096):
                 hasher.update(chunk)

@@ -39,3 +39,12 @@ def test_multi_source(data_dir: Path) -> None:
     result = update_version(test_recipe, "3.7.0", None)
     expected = test_recipe.parent / "expected.yaml"
     assert result == expected.read_text()
+
+
+def test_mpich(data_dir: Path) -> None:
+    tests = data_dir / "version"
+    test_recipe = tests / "mpich/recipe.yaml"
+    result = update_version(test_recipe, "4.1.1", None)
+    print(result)
+    expected = test_recipe.parent / "expected.yaml"
+    assert result == expected.read_text()
