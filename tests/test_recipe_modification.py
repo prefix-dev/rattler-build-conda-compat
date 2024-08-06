@@ -31,3 +31,11 @@ def test_version_mod(data_dir: Path) -> None:
     result = update_version(test_cran, "1.1-30", None)
     expected = test_cran.parent / "expected.yaml"
     assert result == expected.read_text()
+
+
+def test_multi_source(data_dir: Path) -> None:
+    tests = data_dir / "version"
+    test_recipe = tests / "embree/recipe.yaml"
+    result = update_version(test_recipe, "3.7.0", None)
+    expected = test_recipe.parent / "expected.yaml"
+    assert result == expected.read_text()
