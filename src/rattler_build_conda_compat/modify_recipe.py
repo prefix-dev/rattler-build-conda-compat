@@ -5,7 +5,7 @@ import hashlib
 import io
 import logging
 import re
-from typing import TYPE_CHECKING, Any, Literal, Set
+from typing import TYPE_CHECKING, Any, Literal
 
 import requests
 from ruamel.yaml import YAML
@@ -107,9 +107,9 @@ def update_hash(source: Source, url: str, hash_: Hash | None) -> None:
     * `url` - The URL to download and hash (if no hash is provided).
     * `hash_` - The hash to use. If not provided, the file will be downloaded and `sha256` hashed.
     """
-    hash_type : HashType = hash_.hash_type if hash_ is not None else "sha256"
+    hash_type: HashType = hash_.hash_type if hash_ is not None else "sha256"
     # delete all old hashes that we are not updating
-    all_hash_types: Set[HashType] = {"md5", "sha256"}
+    all_hash_types: set[HashType] = {"md5", "sha256"}
     for key in all_hash_types - {hash_type}:
         if key in source:
             del source[key]
