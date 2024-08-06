@@ -5,7 +5,7 @@ import hashlib
 import io
 import logging
 import re
-from typing import TYPE_CHECKING, Any, Literal
+from typing import TYPE_CHECKING, Any, Literal, Set
 
 import requests
 from ruamel.yaml import YAML
@@ -17,6 +17,8 @@ if TYPE_CHECKING:
     from pathlib import Path
 
 logger = logging.getLogger(__name__)
+
+HashType = Literal["md5", "sha256"]
 
 yaml = YAML()
 yaml.preserve_quotes = True
@@ -81,7 +83,7 @@ class CouldNotUpdateVersionError(Exception):
 
 
 class Hash:
-    def __init__(self, hash_type: Literal["md5", "sha256"], hash_value: str) -> None:
+    def __init__(self, hash_type: HashType, hash_value: str) -> None:
         self.hash_type = hash_type
         self.hash_value = hash_value
 
@@ -105,9 +107,9 @@ def update_hash(source: Source, url: str, hash_: Hash | None) -> None:
     * `url` - The URL to download and hash (if no hash is provided).
     * `hash_` - The hash to use. If not provided, the file will be downloaded and `sha256` hashed.
     """
-    hash_type = hash_.hash_type if hash_ is not None else "sha256"
+    hash_type : HashType = hash_.hash_type if hash_ is not None else "sha256"
     # delete all old hashes that we are not updating
-    all_hash_types = {"md5", "sha256"}
+    all_hash_types: Set[HashType] = {"md5", "sha256"}
     for key in all_hash_types - {hash_type}:
         if key in source:
             del source[key]
