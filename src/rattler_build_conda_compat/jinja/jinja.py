@@ -24,7 +24,7 @@ class RecipeWithContext(TypedDict, total=False):
     context: dict[str, str]
 
 
-def jinja_env() -> jinja2.Environment:
+def jinja_env() -> SandboxedEnvironment:
     """
     Create a `rattler-build` specific Jinja2 environment with modified syntax.
     Target platform, build platform, and mpi are set to linux-64 by default.
