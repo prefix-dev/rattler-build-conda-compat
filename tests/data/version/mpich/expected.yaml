@@ -1,0 +1,27 @@
+context:
+  version: 4.1.1
+  build: 0
+  version_url: ${{ version if version[-2:] != ".0" else version[:-2] }}
+  computed_build: ${{ build + 100 if mpi_type == 'conda' else build }}
+
+package:
+  # must not match any outputs for requirements to be handled correctly
+  name: mpich-mpi
+  version: ${{ version }}
+
+source:
+  file_name: mpich-${{ version }}.tar.gz
+  url: https://www.mpich.org/static/downloads/${{ version_url }}/mpich-${{ version_url }}.tar.gz
+  sha256: ee30471b35ef87f4c88f871a5e2ad3811cd9c4df32fd4f138443072ff4284ca2
+  patches:
+    - libfrabric-osx-lock.patch
+    - libfrabric-osx-memsize.patch
+
+build:
+  number: ${{ build }}
+  skip:
+    - win
+
+extra:
+  recipe-maintainers:
+    - mpich
