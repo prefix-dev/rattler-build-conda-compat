@@ -4,6 +4,7 @@ from typing import Any, TypedDict
 
 import jinja2
 import yaml
+from jinja2.sandbox import SandboxedEnvironment
 
 from rattler_build_conda_compat.jinja.filters import _bool, _split, _version_to_build_string
 from rattler_build_conda_compat.jinja.objects import (
@@ -23,13 +24,13 @@ class RecipeWithContext(TypedDict, total=False):
     context: dict[str, str]
 
 
-def jinja_env() -> jinja2.Environment:
+def jinja_env() -> SandboxedEnvironment:
     """
     Create a `rattler-build` specific Jinja2 environment with modified syntax.
     Target platform, build platform, and mpi are set to linux-64 by default.
     """
 
-    env = jinja2.Environment(
+    env = SandboxedEnvironment(
         variable_start_string="${{",
         variable_end_string="}}",
         trim_blocks=True,
