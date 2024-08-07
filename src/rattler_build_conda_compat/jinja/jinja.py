@@ -3,8 +3,8 @@ from __future__ import annotations
 from typing import Any, TypedDict
 
 import jinja2
-from jinja2.sandbox import SandboxedEnvironment
 import yaml
+from jinja2.sandbox import SandboxedEnvironment
 
 from rattler_build_conda_compat.jinja.filters import _bool, _split, _version_to_build_string
 from rattler_build_conda_compat.jinja.objects import (
