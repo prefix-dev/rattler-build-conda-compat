@@ -10,8 +10,7 @@ import subprocess
 import sys
 import tempfile
 from typing import Any, Dict, List, Optional
-import yaml
-from ruamel.yaml import YAML
+
 from conda_build.metadata import (
     MetaData as CondaMetaData,
     OPTIONALLY_ITERABLE_FIELDS,
@@ -29,6 +28,7 @@ from conda_build.config import Config
 from rattler_build_conda_compat.jinja.jinja import render_recipe_with_context
 from rattler_build_conda_compat.loader import load_yaml, parse_recipe_config_file
 from rattler_build_conda_compat.utils import _get_recipe_metadata, find_recipe
+from rattler_build_conda_compat.yaml import _yaml_object
 
 
 class MetaData(CondaMetaData):
@@ -117,13 +117,13 @@ class MetaData(CondaMetaData):
 
     def render_recipes(self, variants) -> List[Dict]:
         platform_and_arch = f"{self.config.platform}-{self.config.arch}"
-
+        yaml = _yaml_object()
         try:
             with tempfile.NamedTemporaryFile(mode="w+") as outfile:
                 with tempfile.NamedTemporaryFile(mode="w") as variants_file:
                     # dump variants in our variants that will be used to generate recipe
                     if variants:
-                        yaml.dump(variants, variants_file, default_flow_style=False)
+                        yaml.dump(variants, variants_file)
 
                     variants_path = variants_file.name
 

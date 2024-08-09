@@ -38,20 +38,9 @@ def get_recipe_schema() -> Dict[Any, Any]:
     return requests.get(SCHEMA_URL).json()
 
 
-def yaml_reader():
-    # define global yaml API
-    # roundrip-loader and allowing duplicate keys
-    # for handling # [filter] / # [not filter]
-    # Don't use a global variable for this as a global
-    # variable will make conda-smithy thread unsafe.
-    yaml = ruamel.yaml.YAML(typ="rt")
-    yaml.allow_duplicate_keys = True
-    return yaml
-
-
 def lint_recipe_yaml_by_schema(recipe_file):
     schema = get_recipe_schema()
-    yaml = yaml_reader()
+    yaml = _yaml_object()
 
     with open(recipe_file) as fh:
         meta = yaml.load(fh)

@@ -3,7 +3,6 @@ from __future__ import annotations
 from typing import Any, TypedDict
 
 import jinja2
-import yaml
 from jinja2.sandbox import SandboxedEnvironment
 
 from rattler_build_conda_compat.jinja.filters import _bool, _split, _version_to_build_string
@@ -18,6 +17,7 @@ from rattler_build_conda_compat.jinja.objects import (
 )
 from rattler_build_conda_compat.jinja.utils import _MissingUndefined
 from rattler_build_conda_compat.loader import load_yaml
+from rattler_build_conda_compat.yaml import _dump_yaml_to_string
 
 
 class RecipeWithContext(TypedDict, total=False):
@@ -113,6 +113,7 @@ def render_recipe_with_context(recipe_content: RecipeWithContext) -> dict[str, A
 
     # render the rest of the document with the values from the context
     # and keep undefined expressions _as is_.
-    template = env.from_string(yaml.dump(recipe_content))
+    template = env.from_string(_dump_yaml_to_string(recipe_content))
     rendered_content = template.render(context_variables)
+    print(rendered_content)
     return load_yaml(rendered_content)
