@@ -1,6 +1,6 @@
 [project]
 name = "rattler-build-conda-compat"
-version = "1.1.1"
+version = "1.2.0"
 description = "A package for exposing rattler-build API for conda-smithy"
 authors = ["nichmor <nmorkotilo@gmail.com>"]
 channels = ["conda-forge"]
