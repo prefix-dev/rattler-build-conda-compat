@@ -43,7 +43,9 @@ def load_yaml(content: str | bytes) -> Any:  # noqa: ANN401
         return yaml.load(f)
 
 
-def _eval_selector(condition: str, namespace: dict[str, Any], allow_missing_selector: bool) -> bool:
+def _eval_selector(
+    condition: str, namespace: dict[str, Any], *, allow_missing_selector: bool = False
+) -> bool:
     # evaluate the selector expression
     if allow_missing_selector:
         namespace = namespace.copy()
@@ -58,17 +60,25 @@ def _eval_selector(condition: str, namespace: dict[str, Any], allow_missing_sele
     return eval(condition, namespace)  # noqa: S307
 
 
-def _render_recipe(yaml_object: Any, context: dict[str, Any], allow_missing_selector: bool) -> Any:  # noqa: ANN401
+def _render_recipe(
+    yaml_object: Any,  # noqa: ANN401
+    context: dict[str, Any],
+    *,
+    allow_missing_selector: bool = False,
+) -> Any:  # noqa: ANN401
     # recursively go through the yaml object, and convert any lists with conditional if/else statements
     # into a single list
     if isinstance(yaml_object, dict):
         for key, value in yaml_object.items():
-            yaml_object[key] = _render_recipe(value, context, allow_missing_selector)
+            yaml_object[key] = _render_recipe(
+                value, context, allow_missing_selector=allow_missing_selector
+            )
     elif isinstance(yaml_object, list):
         # if the list is a conditional list, evaluate it
         yaml_object = list(
             visit_conditional_list(
-                yaml_object, lambda x: _eval_selector(x, context, allow_missing_selector)
+                yaml_object,
+                lambda x: _eval_selector(x, context, allow_missing_selector=allow_missing_selector),
             )
         )
     return yaml_object
@@ -82,7 +92,9 @@ def parse_recipe_config_file(
         raw_yaml_content = yaml.load(f)
 
     # render the recipe with the context
-    rendered = _render_recipe(raw_yaml_content, namespace, allow_missing_selector)
+    rendered = _render_recipe(
+        raw_yaml_content, namespace, allow_missing_selector=allow_missing_selector
+    )
     return _flatten_lists(_remove_empty_keys(rendered))
 
 
