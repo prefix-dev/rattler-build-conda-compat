@@ -115,5 +115,5 @@ def render_recipe_with_context(recipe_content: RecipeWithContext) -> dict[str, A
     # and keep undefined expressions _as is_.
     template = env.from_string(_dump_yaml_to_string(recipe_content))
     rendered_content = template.render(context_variables)
-    print(rendered_content)
+
     return load_yaml(rendered_content)
