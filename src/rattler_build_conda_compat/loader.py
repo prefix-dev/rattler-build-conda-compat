@@ -37,7 +37,7 @@ def _flatten_lists(some_dict: dict[str, Any]) -> dict[str, Any]:
     return result_dict
 
 
-def load_yaml(content: str | bytes) -> Any:  # noqa: ANN401
+def load_yaml(content: str) -> Any:  # noqa: ANN401
     yaml = _yaml_object()
     with io.StringIO(content) as f:
         return yaml.load(f)
@@ -92,6 +92,9 @@ def parse_recipe_config_file(
         raw_yaml_content = yaml.load(f)
 
     # render the recipe with the context
+    if namespace is None:
+        namespace = {}
+
     rendered = _render_recipe(
         raw_yaml_content, namespace, allow_missing_selector=allow_missing_selector
     )
