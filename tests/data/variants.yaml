@@ -12,6 +12,11 @@ numpy:
   - 1.22
   - 1.22
 
+liboost:
+  # test trailing zeros
+  - 0.10.01.001
+  - 0.10
+
 ruby:
   - if : unix
     then: 2.5
