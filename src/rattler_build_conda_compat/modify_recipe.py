@@ -2,16 +2,15 @@ from __future__ import annotations
 
 import copy
 import hashlib
-import io
 import logging
 import re
 from typing import TYPE_CHECKING, Any, Literal
 
 import requests
-from ruamel.yaml import YAML
 
 from rattler_build_conda_compat.jinja.jinja import jinja_env, load_recipe_context
 from rattler_build_conda_compat.recipe_sources import Source, get_all_sources
+from rattler_build_conda_compat.yaml import _dump_yaml_to_string, _yaml_object
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -19,11 +18,6 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 HashType = Literal["md5", "sha256"]
-
-yaml = YAML()
-yaml.preserve_quotes = True
-yaml.width = 4096
-yaml.indent(mapping=2, sequence=4, offset=2)
 
 
 def _update_build_number_in_context(recipe: dict[str, Any], new_build_number: int) -> bool:
@@ -62,15 +56,14 @@ def update_build_number(file: Path, new_build_number: int = 0) -> str:
     --------
     The updated recipe as a string.
     """
+    yaml = _yaml_object()
     with file.open("r") as f:
         data = yaml.load(f)
     build_number_modified = _update_build_number_in_context(data, new_build_number)
     if not build_number_modified:
         _update_build_number_in_recipe(data, new_build_number)
 
-    with io.StringIO() as f:
-        yaml.dump(data, f)
-        return f.getvalue()
+    return _dump_yaml_to_string(data)
 
 
 class CouldNotUpdateVersionError(Exception):
@@ -141,6 +134,7 @@ def update_version(file: Path, new_version: str, hash_: Hash | None) -> str:
     The updated recipe as a string.
     """
 
+    yaml = _yaml_object()
     with file.open("r") as f:
         data = yaml.load(f)
 
@@ -175,6 +169,4 @@ def update_version(file: Path, new_version: str, hash_: Hash | None) -> str:
 
         update_hash(source, rendered_url, hash_)
 
-    with io.StringIO() as f:
-        yaml.dump(data, f)
-        return f.getvalue()
+    return _dump_yaml_to_string(data)

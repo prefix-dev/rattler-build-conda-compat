@@ -1,19 +1,18 @@
 from pathlib import Path
 
-import yaml
 from rattler_build_conda_compat.jinja.filters import _version_to_build_string
 from rattler_build_conda_compat.jinja.jinja import render_recipe_with_context
 from rattler_build_conda_compat.jinja.utils import _MissingUndefined
 from rattler_build_conda_compat.loader import load_yaml
+from rattler_build_conda_compat.yaml import _dump_yaml_to_string
 
 
 def test_render_recipe_with_context(snapshot) -> None:
     recipe = Path("tests/data/mamba_recipe.yaml")
-    with recipe.open() as f:
-        recipe_yaml = load_yaml(f)
+    recipe_yaml = load_yaml(recipe.read_text())
 
     rendered = render_recipe_with_context(recipe_yaml)
-    into_yaml = yaml.dump(rendered)
+    into_yaml = _dump_yaml_to_string(rendered)
 
     assert into_yaml == snapshot
 
@@ -28,10 +27,10 @@ def test_version_to_build_string() -> None:
 
 def test_context_rendering(snapshot) -> None:
     recipe = Path("tests/data/context.yaml")
-    with recipe.open() as f:
-        recipe_yaml = load_yaml(f)
+
+    recipe_yaml = load_yaml(recipe.read_text())
 
     rendered = render_recipe_with_context(recipe_yaml)
-    into_yaml = yaml.dump(rendered)
+    into_yaml = _dump_yaml_to_string(rendered)
 
     assert into_yaml == snapshot
