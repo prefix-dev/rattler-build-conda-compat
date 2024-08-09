@@ -1,6 +1,8 @@
-from ruamel.yaml import YAML
-from typing import Any
 import io
+from typing import Any
+
+from ruamel.yaml import YAML
+
 
 def _yaml_object() -> YAML:
     yaml = YAML(typ="rt")
@@ -10,7 +12,8 @@ def _yaml_object() -> YAML:
     yaml.indent(mapping=2, sequence=4, offset=2)
     return yaml
 
-def _dump_yaml_to_string(data: Any) -> str:
+
+def _dump_yaml_to_string(data: Any) -> str:  # noqa: ANN401
     yaml = _yaml_object()
     with io.StringIO() as f:
         yaml.dump(data, f)
