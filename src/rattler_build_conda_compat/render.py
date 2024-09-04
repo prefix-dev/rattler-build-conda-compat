@@ -54,10 +54,12 @@ class MetaData(CondaMetaData):
         if not rendered_recipe:
             self.meta = self.parse_recipe()
             self.meta["about"] = self.meta.get("about", {})
+            self.meta["extra"] = self.meta.get("extra", {})
         else:
             self.meta = rendered_recipe
             self._rendered = True
             self.meta["about"] = self.meta["recipe"].get("about", {})
+            self.meta["extra"] = self.meta["recipe"].get("extra", {})
 
         self.final = True
         self.undefined_jinja_vars = []
