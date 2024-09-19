@@ -80,3 +80,16 @@ def get_all_url_sources(recipe: Mapping[Any, Any]) -> Iterator[str]:
         return source["url"]
 
     return (get_first_url(source) for source in get_all_sources(recipe) if "url" in source)
+
+
+def render_all_sources(
+    recipe: Mapping[Any, Any],
+    variants: [Mapping[Any, Any]],
+    override_version: str | None = None,
+    target_platforms: [str] | None = None,
+) -> [Source]:
+    """
+    This function should render _all_ URL sources with the
+    """
+    all_sources = list(get_all_sources(recipe))
+    print(all_sources)
