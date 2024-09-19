@@ -1,9 +1,12 @@
+from __future__ import annotations
+
 from pathlib import Path
 
 from rattler_build_conda_compat.jinja.filters import _version_to_build_string
 from rattler_build_conda_compat.jinja.jinja import render_recipe_with_context
 from rattler_build_conda_compat.jinja.utils import _MissingUndefined
 from rattler_build_conda_compat.loader import load_yaml
+from rattler_build_conda_compat.recipe_sources import render_all_sources
 from rattler_build_conda_compat.yaml import _dump_yaml_to_string
 
 test_data = Path(__file__).parent / "data"
@@ -45,9 +48,7 @@ def test_context_rendering(snapshot) -> None:
 
     rendered = []
     for v in variants:
-        vx = {
-            el: v[el][0] for el in v
-        }
+        vx = {el: v[el][0] for el in v}
 
         rendered.append(render_recipe_with_context(recipe_yaml, vx))
 
@@ -56,17 +57,12 @@ def test_context_rendering(snapshot) -> None:
     assert into_yaml == snapshot
 
 
-def test_multi_source_render(snapshot) -> None:
+def test_multi_source_render() -> None:
     jolt_physics = test_data / "jolt-physics" / "sources.yaml"
     variants = (test_data / "jolt-physics" / "ci_support").glob("*.yaml")
 
     recipe_yaml = load_yaml(jolt_physics.read_text())
     variants = [load_yaml(variant.read_text()) for variant in variants]
 
-    rendered = []
-    for v in variants:
-        vx = {
-            el: v[el][0] for el in v
-        }
-
-        print(render_recipe_with_context(recipe_yaml, vx))
+    sources = render_all_sources(recipe_yaml, variants)
+    print(sources)
