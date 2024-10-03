@@ -118,7 +118,8 @@ class MetaData(CondaMetaData):
         return version
 
     def render_recipes(self, variants) -> List[Dict]:
-        platform_and_arch = f"{self.config.platform}-{self.config.arch}"
+        build_platform_and_arch = f"{self.config.platform}-{self.config.arch}"
+        target_platform_and_arch = f"{self.config.host_platform}-{self.config.host_arch}"
         yaml = _yaml_object()
         try:
             with tempfile.NamedTemporaryFile(mode="w+") as outfile:
@@ -136,9 +137,9 @@ class MetaData(CondaMetaData):
                         "--recipe",
                         self.path,
                         "--target-platform",
-                        platform_and_arch,
+                        target_platform_and_arch,
                         "--build-platform",
-                        platform_and_arch,
+                        build_platform_and_arch,
                     ]
 
                     if variants:
