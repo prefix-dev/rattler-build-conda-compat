@@ -121,15 +121,6 @@ class MetaData(CondaMetaData):
         build_platform_and_arch = f"{self.config.platform}-{self.config.arch}"
         target_platform_and_arch = f"{self.config.host_platform}-{self.config.host_arch}"
 
-        print("***************************************************")
-
-        print(f"build_platform_and_arch: {build_platform_and_arch}")
-        print(f"target_platform_and_arch: {target_platform_and_arch}")
-        print(f"variants: {variants}")
-        print(f"config: {self.config}")
-
-        print("***************************************************")
-
         yaml = _yaml_object()
         try:
             with tempfile.NamedTemporaryFile(mode="w+") as outfile:
