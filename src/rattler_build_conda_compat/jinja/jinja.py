@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, TypedDict
+from typing import Any, Mapping, TypedDict
 
 import jinja2
 from jinja2.sandbox import SandboxedEnvironment
@@ -8,9 +8,6 @@ from jinja2.sandbox import SandboxedEnvironment
 from rattler_build_conda_compat.jinja.filters import _bool, _split, _version_to_build_string
 from rattler_build_conda_compat.jinja.objects import (
     _stub_compatible_pin,
-    _stub_is_linux,
-    _stub_is_unix,
-    _stub_is_win,
     _stub_match,
     _stub_subpackage_pin,
     _StubEnv,
@@ -24,7 +21,7 @@ class RecipeWithContext(TypedDict, total=False):
     context: dict[str, str]
 
 
-def jinja_env() -> SandboxedEnvironment:
+def jinja_env(variant_config: Mapping[str, str] | None = None) -> SandboxedEnvironment:
     """
     Create a `rattler-build` specific Jinja2 environment with modified syntax.
     Target platform, build platform, and mpi are set to linux-64 by default.
@@ -42,6 +39,20 @@ def jinja_env() -> SandboxedEnvironment:
     env_obj = _StubEnv()
 
     # inject rattler-build recipe functions in jinja environment
+    if not variant_config:
+        variant_config = {"target_platform": "linux-64", "build_platform": "linux-64", "mpi": "mpi"}
+
+    extra_vars = {}
+    target_platform = variant_config["target_platform"]
+    if target_platform != "noarch":
+        # set `linux` / `win`
+        extra_vars[target_platform.split("-")[0]] = True
+
+    if target_platform.startswith("win"):
+        extra_vars["unix"] = False
+    else:
+        extra_vars["unix"] = True
+
     env.globals.update(
         {
             "compiler": lambda x: x + "_compiler_stub",
@@ -51,14 +62,11 @@ def jinja_env() -> SandboxedEnvironment:
             "cdt": lambda *args, **kwargs: "cdt_stub",  # noqa: ARG005
             "env": env_obj,
             "match": _stub_match,
-            "is_unix": _stub_is_unix,
-            "is_win": _stub_is_win,
-            "is_linux": _stub_is_linux,
-            "unix": True,
-            "linux": True,
-            "target_platform": "linux-64",
-            "build_platform": "linux-64",
-            "mpi": "mpi",
+            "is_unix": lambda x: not x.startswith("win"),
+            "is_win": lambda x: x.startswith("win"),
+            "is_linux": lambda x: x.startswith("linux"),
+            **extra_vars,
+            **variant_config,
         }
     )
 
@@ -89,7 +97,9 @@ def load_recipe_context(context: dict[str, str], jinja_env: jinja2.Environment) 
     return context
 
 
-def render_recipe_with_context(recipe_content: RecipeWithContext) -> dict[str, Any]:
+def render_recipe_with_context(
+    recipe_content: RecipeWithContext, variant_config: Mapping[str, str] | None = None
+) -> dict[str, Any]:
     """
     Render the recipe using known values from context section.
     Unknown values are not evaluated and are kept as it is.
@@ -106,7 +116,7 @@ def render_recipe_with_context(recipe_content: RecipeWithContext) -> dict[str, A
     >>>
     ```
     """
-    env = jinja_env()
+    env = jinja_env(variant_config)
     context = recipe_content.get("context", {})
     # render out the context section and retrieve dictionary
     context_variables = load_recipe_context(context, env)

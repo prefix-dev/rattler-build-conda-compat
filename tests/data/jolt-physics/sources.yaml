@@ -1,0 +1,21 @@
+package:
+  name: jolt-physics
+  version: 0.0.1
+
+source:
+  - if: target_platform == "linux-64"
+    then:
+      url: https://foo.com
+      sha256: 679d42a76b82a6dc20ffd9048ab45fb2e5557a526113aaedc7419e12f3cfab38
+  - if: target_platform == "win-64"
+    then:
+      url: https://win.com
+      sha256: xxx
+  - if: target_platform == "osx-64" or target_platform == "win-64"
+    then:
+      url: https://osx.com/${{ target_platform }}/foo.zip
+      sha256: zzz
+  - url: https://all.com
+    sha256: yyy
+  - url: ["https://foo.com/${{ target_platform }}/zip.zip", "https://mirror.com/${{ target_platform }}/zip.zip"]
+    sha256: ${{ "xxx" if win else "yyy" }}
